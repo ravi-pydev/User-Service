@@ -1,9 +1,10 @@
+-- Active: 1776061179976@@127.0.0.1@3306
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Government Job Registration Portal</title>
+<title>Registration Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -595,6 +596,45 @@
     font-size: 12px; color: var(--gold);
     margin-bottom: 16px;
   }
+
+  .subsection-title {
+    grid-column: 1 / -1;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-top: 8px;
+  }
+
+  .subsection-note {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-top: -8px;
+  }
+
+  .feature-block {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .feature-block strong {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .feature-block span {
+    display: block;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body>
@@ -602,13 +642,13 @@
 <!-- ══════════ HEADER ══════════ -->
 <header class="header">
   <div class="header-emblem">
-    <div class="emblem-circle"><span>🏛️</span></div>
+    {% comment %} <div class="emblem-circle"><span>🏛️</span></div> {% endcomment %}
     <div>
-      <div class="header-title">Government Job Registration Portal</div>
-      <div class="header-sub">Ministry of Personnel · Public Grievances &amp; Pensions</div>
+      <div class="header-title">Registration Portal</div>
+      {% comment %} <div class="header-sub">Ministry of Personnel · Public Grievances &amp; Pensions</div> {% endcomment %}
     </div>
   </div>
-  <div class="tricolor-bar"></div>
+  {% comment %} <div class="tricolor-bar"></div> {% endcomment %}
 </header>
 
 <!-- ══════════ MAIN ══════════ -->
@@ -699,6 +739,25 @@
           </div>
           <span class="error-msg" id="err-category">Please select a category</span>
         </div>
+
+        <div class="subsection-title">Identity & Registration Support</div>
+        <div class="subsection-note">These extra registration blocks help applicants share verification and support details in one place.</div>
+
+        <div class="form-group">
+          <label>Aadhaar Number</label>
+          <input type="text" id="aadhaar" placeholder="XXXX XXXX XXXX" maxlength="14">
+        </div>
+        <div class="form-group">
+          <label>PAN Number</label>
+          <input type="text" id="pan" placeholder="ABCDE1234F" maxlength="10">
+        </div>
+        <div class="form-group full">
+          <label>Are you a PwD Candidate?</label>
+          <div class="radio-group">
+            <div class="radio-btn"><input type="radio" name="pwd" id="pwdYes" value="Yes"><label for="pwdYes">Yes</label></div>
+            <div class="radio-btn"><input type="radio" name="pwd" id="pwdNo" value="No"><label for="pwdNo">No</label></div>
+          </div>
+        </div>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="nextStep(1)">Next: Address Details →</button>
@@ -758,6 +817,27 @@
             <option value="Indian" selected>Indian</option>
             <option>Other</option>
           </select>
+        </div>
+
+        <div class="subsection-title">Communication Blocks</div>
+        <div class="form-group">
+          <label>Preferred Language</label>
+          <select id="preferredLanguage">
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Tamil</option>
+            <option>Telugu</option>
+            <option>Bengali</option>
+            <option>Marathi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nearest Exam City</label>
+          <input type="text" id="examCity" placeholder="Preferred city for exam center">
+        </div>
+        <div class="form-group full">
+          <label>Alternate Address / Landmark</label>
+          <textarea id="landmark" placeholder="Landmark, alternate contact address, or delivery note"></textarea>
         </div>
       </div>
       <div class="btn-row">
@@ -869,6 +949,35 @@
           <div class="skills-hint">💡 Press Enter or comma after each skill. e.g. MS Excel, Hindi Typing, Communication</div>
           <span class="error-msg" id="err-skills">Please add at least one skill</span>
         </div>
+
+        <div class="subsection-title">Exam Readiness Blocks</div>
+        <div class="form-group">
+          <label>Attempting For</label>
+          <select id="attemptYear">
+            <option>2026 Recruitment Cycle</option>
+            <option>2027 Recruitment Cycle</option>
+            <option>Both</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Coaching Status</label>
+          <select id="coachingStatus">
+            <option>Self Study</option>
+            <option>Online Coaching</option>
+            <option>Offline Coaching</option>
+            <option>Hybrid</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Target Departments</label>
+          <div class="check-group">
+            <div class="check-btn"><input type="checkbox" id="deptRevenue"><label for="deptRevenue">Revenue</label></div>
+            <div class="check-btn"><input type="checkbox" id="deptPolice"><label for="deptPolice">Police</label></div>
+            <div class="check-btn"><input type="checkbox" id="deptEducation"><label for="deptEducation">Education</label></div>
+            <div class="check-btn"><input type="checkbox" id="deptHealth"><label for="deptHealth">Health</label></div>
+            <div class="check-btn"><input type="checkbox" id="deptAdmin"><label for="deptAdmin">Administration</label></div>
+          </div>
+        </div>
       </div>
       <div class="btn-row">
         <button class="btn btn-outline" onclick="prevStep(4)">← Back</button>
@@ -918,6 +1027,20 @@
             <div class="file-name" id="idName"></div>
           </div>
           <span class="error-msg" id="err-id">Please upload your ID proof</span>
+        </div>
+
+        <div class="subsection-title">Additional Registration Blocks</div>
+        <div class="feature-block">
+          <strong>Caste / Income Certificate</strong>
+          <span>Optional for reserved category and EWS applicants during initial registration.</span>
+        </div>
+        <div class="feature-block">
+          <strong>Experience Certificate</strong>
+          <span>Optional for experienced applicants applying to departmental or specialist roles.</span>
+        </div>
+        <div class="form-group full">
+          <label>Reference Notes</label>
+          <textarea id="referenceNotes" placeholder="Mention certificate numbers, issuing authority, or special upload notes"></textarea>
         </div>
       </div>
 
