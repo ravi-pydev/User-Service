@@ -205,3 +205,130 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+
+idp-env
+*.log
+
+*.py[codt]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Complexity
+output/*.html
+output/*/index.html
+
+# Sphinx
+docs/_build
+
+.webassets-cache
+
+# Virtualenvs
+venv
+Pipfile
+Pipfile.lock
+
+# intellij
+*.ipr
+*.iml
+*.iws
+*.pem
+
+# Mysql
+*.sql
+*.sql.gz
+
+#Test Files
+test_*.txt
+
+cnext_backend/settings/local.py
+cnext_backend/settings/prelocal.py
+cnext_backend/deploy/settings/local.py
+
+# collect static output directory
+cnext_backend/static/
+
+.DS_Store
+.idea/
+static/
+media/
+newrelic.ini
+
+# node
+node_modules/
+assets/*
+assets/*.js
+
+assets/frontend/*.html
+assets/frontend/*.json
+
+assets/frontend/*.map
+assets/frontend/bundle.js
+assets/frontend/*.bundle.js
+assets/frontend/*.hot-update.js
+assets/frontend/*.hot-update.js.map
+
+# bower packages
+cnext_backend/assets-src/vendor/
+.sass-cache/
+todo.txt
+*.rdb
+*.vscode
+*.idea
+/newrelic.ini
+*.ini
+*.package-lock.json
+
+#Remove env
+.env
+/.env
+
+#next js specific
+.next
+/package-lock.json
+
+./deploy/nginx.conf
+*/temp/*
+/cnext_frontend/public/sw.js
+/cnext_frontend/public/sw.js.map
+/cnext_frontend/public/workbox-*
+
+## Elasticsearch Query file
+query.es
+*.es
+
+## GeoIP2-City.mmdb
+*.mmdb
