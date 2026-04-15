@@ -1,0 +1,69 @@
+{% extends "registration_base.html" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">📍</div>
+    <div>
+      <div class="card-title">Address Details</div>
+      <div class="card-subtitle">Your current residential address</div>
+    </div>
+  </div>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>State <span class="req">*</span></label>
+      <select id="state" data-persist="state">
+        <option value="">-- Select State --</option>
+        <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option><option>Bihar</option>
+        <option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option><option>Haryana</option>
+        <option>Himachal Pradesh</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+        <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option><option>Punjab</option>
+        <option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option>
+        <option>Uttarakhand</option><option>West Bengal</option><option>Delhi (NCT)</option>
+      </select>
+      <span class="error-msg" id="err-state">Please select a state</span>
+    </div>
+    <div class="form-group">
+      <label>District <span class="req">*</span></label>
+      <input type="text" id="district" data-persist="district" placeholder="Your district">
+      <span class="error-msg" id="err-district">Please enter district</span>
+    </div>
+    <div class="form-group full">
+      <label>Full Address <span class="req">*</span></label>
+      <textarea id="address" data-persist="address" placeholder="House/Flat No., Street, Locality, City..."></textarea>
+      <span class="error-msg" id="err-address">Please enter your full address</span>
+    </div>
+    <div class="form-group">
+      <label>Pincode <span class="req">*</span></label>
+      <input type="text" id="pincode" data-persist="pincode" placeholder="6-digit PIN code" maxlength="6">
+      <span class="error-msg" id="err-pincode">Enter valid 6-digit pincode</span>
+    </div>
+    <div class="form-group">
+      <label>Nationality</label>
+      <select id="nationality" data-persist="nationality">
+        <option value="Indian">Indian</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="subsection-title">Communication Blocks</div>
+    <div class="form-group">
+      <label>Preferred Language</label>
+      <select id="preferredLanguage" data-persist="preferredLanguage">
+        <option>English</option><option>Hindi</option><option>Tamil</option><option>Telugu</option><option>Bengali</option><option>Marathi</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Nearest Exam City</label>
+      <input type="text" id="examCity" data-persist="examCity" placeholder="Preferred city for exam center">
+    </div>
+    <div class="form-group full">
+      <label>Alternate Address / Landmark</label>
+      <textarea id="landmark" data-persist="landmark" placeholder="Landmark, alternate contact address, or delivery note"></textarea>
+    </div>
+  </div>
+  <div class="btn-row">
+    <a class="btn btn-outline" href="{% url 'registration-step' step=1 %}">Back</a>
+    <a class="btn btn-primary" href="{% url 'registration-step' step=3 %}" onclick="return goToNextStep(2, this.href)">Next: Education</a>
+  </div>
+</div>
+{% endblock %}

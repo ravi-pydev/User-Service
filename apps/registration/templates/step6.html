@@ -1,0 +1,49 @@
+{% extends "registration_base.html" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">💳</div>
+    <div>
+      <div class="card-title">Registration Fee Payment</div>
+      <div class="card-subtitle">Complete payment to submit your application</div>
+    </div>
+  </div>
+
+  <div class="payment-summary">
+    <div class="payment-row"><span>Application Processing Fee</span><span class="amount">₹400</span></div>
+    <div class="payment-row"><span>Portal Convenience Fee</span><span class="amount">₹75</span></div>
+    <div class="payment-row"><span>GST (18%)</span><span class="amount">₹25</span></div>
+    <div class="payment-row"><span>Total Amount</span><span class="total-amount">₹500</span></div>
+  </div>
+
+  <label style="font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block">Payment Method</label>
+  <div class="payment-methods">
+    <button class="pay-method active" type="button" data-method="Net Banking" onclick="selectPayMethod(this)">Net Banking</button>
+    <button class="pay-method" type="button" data-method="Card" onclick="selectPayMethod(this)">Debit/Credit Card</button>
+    <button class="pay-method" type="button" data-method="UPI" onclick="selectPayMethod(this)">UPI</button>
+    <button class="pay-method" type="button" data-method="Challan" onclick="selectPayMethod(this)">Challan</button>
+  </div>
+
+  <button class="btn-pay" id="payBtn" type="button" onclick="simulatePayment()">Proceed to Pay ₹500</button>
+
+  <div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner"></div>
+    <div>Processing payment...</div>
+  </div>
+
+  <div class="payment-success" id="paymentSuccess">
+    <div class="success-icon">✅</div>
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--green-light)">Payment Successful!</div>
+    <div class="txn-box">Transaction ID: <strong id="txnId"></strong></div>
+  </div>
+
+  <div class="btn-row" id="submitRow" style="display:none">
+    <a class="btn btn-outline" href="{% url 'registration-step' step=5 %}">Back</a>
+    <a class="btn btn-success" href="{% url 'registration-success' %}" onclick="return submitApplication(this.href)">Submit Application</a>
+  </div>
+  <div class="btn-row" id="backBeforePay">
+    <a class="btn btn-outline" href="{% url 'registration-step' step=5 %}">Back</a>
+  </div>
+</div>
+{% endblock %}

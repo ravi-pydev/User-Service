@@ -1,0 +1,79 @@
+{% extends "registration_base.html" %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">🏆</div>
+    <div>
+      <div class="card-title">Job Preferences</div>
+      <div class="card-subtitle">Your government job preferences and skills</div>
+    </div>
+  </div>
+  <div class="form-grid">
+    <div class="form-group full">
+      <label>Preferred Job Type <span class="req">*</span></label>
+      <div class="check-group" id="jobTypeGroup">
+        <div class="check-btn"><input type="checkbox" id="jUpsc" data-persist="jUpsc"><label for="jUpsc">UPSC</label></div>
+        <div class="check-btn"><input type="checkbox" id="jSSC" data-persist="jSSC"><label for="jSSC">SSC</label></div>
+        <div class="check-btn"><input type="checkbox" id="jBank" data-persist="jBank"><label for="jBank">Banking</label></div>
+        <div class="check-btn"><input type="checkbox" id="jRail" data-persist="jRail"><label for="jRail">Railway</label></div>
+        <div class="check-btn"><input type="checkbox" id="jDef" data-persist="jDef"><label for="jDef">Defence</label></div>
+        <div class="check-btn"><input type="checkbox" id="jState" data-persist="jState"><label for="jState">State Govt</label></div>
+      </div>
+      <span class="error-msg" id="err-jobType">Please select at least one job type</span>
+    </div>
+    <div class="form-group">
+      <label>Preferred Location</label>
+      <input type="text" id="prefLocation" data-persist="prefLocation" placeholder="e.g. Delhi, Mumbai, Home State">
+    </div>
+    <div class="form-group">
+      <label>Experience <span class="req">*</span></label>
+      <div class="radio-group">
+        <div class="radio-btn"><input type="radio" name="exp" id="eFresh" value="Fresher" data-persist="exp"><label for="eFresh">Fresher</label></div>
+        <div class="radio-btn"><input type="radio" name="exp" id="eExp" value="Experienced" data-persist="exp"><label for="eExp">Experienced</label></div>
+      </div>
+      <span class="error-msg" id="err-exp">Please select experience level</span>
+    </div>
+    <div class="form-group full">
+      <label>Skills <span class="req">*</span></label>
+      <div class="skills-input-wrapper" id="skillsWrapper" onclick="document.getElementById('skillInput').focus()">
+        <input type="text" class="skills-input" id="skillInput" placeholder="Type skill and press Enter">
+      </div>
+      <div class="skills-hint">Press Enter or comma after each skill.</div>
+      <span class="error-msg" id="err-skills">Please add at least one skill</span>
+    </div>
+    <div class="subsection-title">Exam Readiness Blocks</div>
+    <div class="form-group">
+      <label>Attempting For</label>
+      <select id="attemptYear" data-persist="attemptYear">
+        <option>2026 Recruitment Cycle</option>
+        <option>2027 Recruitment Cycle</option>
+        <option>Both</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Coaching Status</label>
+      <select id="coachingStatus" data-persist="coachingStatus">
+        <option>Self Study</option>
+        <option>Online Coaching</option>
+        <option>Offline Coaching</option>
+        <option>Hybrid</option>
+      </select>
+    </div>
+    <div class="form-group full">
+      <label>Target Departments</label>
+      <div class="check-group">
+        <div class="check-btn"><input type="checkbox" id="deptRevenue" data-persist="deptRevenue"><label for="deptRevenue">Revenue</label></div>
+        <div class="check-btn"><input type="checkbox" id="deptPolice" data-persist="deptPolice"><label for="deptPolice">Police</label></div>
+        <div class="check-btn"><input type="checkbox" id="deptEducation" data-persist="deptEducation"><label for="deptEducation">Education</label></div>
+        <div class="check-btn"><input type="checkbox" id="deptHealth" data-persist="deptHealth"><label for="deptHealth">Health</label></div>
+        <div class="check-btn"><input type="checkbox" id="deptAdmin" data-persist="deptAdmin"><label for="deptAdmin">Administration</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <a class="btn btn-outline" href="{% url 'registration-step' step=3 %}">Back</a>
+    <a class="btn btn-primary" href="{% url 'registration-step' step=5 %}" onclick="return goToNextStep(4, this.href)">Next: Documents</a>
+  </div>
+</div>
+{% endblock %}

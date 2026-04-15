@@ -1,0 +1,79 @@
+<!-- ── STEP 4: Preferences ── -->
+<div class="step-content" id="step4" style="display:none">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🏆</div>
+      <div>
+        <div class="card-title">Job Preferences</div>
+        <div class="card-subtitle">Your government job preferences &amp; skills</div>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Preferred Job Type <span class="req">*</span></label>
+        <div class="check-group" id="jobTypeGroup">
+          <div class="check-btn"><input type="checkbox" id="jUpsc" value="UPSC"><label for="jUpsc">🏛️ UPSC</label></div>
+          <div class="check-btn"><input type="checkbox" id="jSSC" value="SSC"><label for="jSSC">📋 SSC</label></div>
+          <div class="check-btn"><input type="checkbox" id="jBank" value="Banking"><label for="jBank">🏦 Banking</label></div>
+          <div class="check-btn"><input type="checkbox" id="jRail" value="Railway"><label for="jRail">🚂 रेलवे</label></div>
+          <div class="check-btn"><input type="checkbox" id="jDef" value="Defence"><label for="jDef">⚔️ Defence</label></div>
+          <div class="check-btn"><input type="checkbox" id="jState" value="State Govt"><label for="jState">🗺️ State Govt</label></div>
+        </div>
+        <span class="error-msg" id="err-jobType">Please select at least one job type</span>
+      </div>
+      <div class="form-group">
+        <label>Preferred Location</label>
+        <input type="text" id="prefLocation" placeholder="e.g. Delhi, Mumbai, Home State">
+      </div>
+      <div class="form-group">
+        <label>Experience <span class="req">*</span></label>
+        <div class="radio-group">
+          <div class="radio-btn"><input type="radio" name="exp" id="eFresh" value="Fresher"><label for="eFresh">🌱 Fresher</label></div>
+          <div class="radio-btn"><input type="radio" name="exp" id="eExp" value="Experienced"><label for="eExp">💼 Experienced</label></div>
+        </div>
+        <span class="error-msg" id="err-exp">Please select experience level</span>
+      </div>
+      <div class="form-group full">
+        <label>Skills <span class="req">*</span></label>
+        <div class="skills-input-wrapper" id="skillsWrapper" onclick="document.getElementById('skillInput').focus()">
+          <input type="text" class="skills-input" id="skillInput" placeholder="Type skill & press Enter...">
+        </div>
+        <div class="skills-hint">💡 Press Enter or comma after each skill. e.g. MS Excel, Hindi Typing, Communication</div>
+        <span class="error-msg" id="err-skills">Please add at least one skill</span>
+      </div>
+
+      <div class="subsection-title">Exam Readiness Blocks</div>
+      <div class="form-group">
+        <label>Attempting For</label>
+        <select id="attemptYear">
+          <option>2026 Recruitment Cycle</option>
+          <option>2027 Recruitment Cycle</option>
+          <option>Both</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Coaching Status</label>
+        <select id="coachingStatus">
+          <option>Self Study</option>
+          <option>Online Coaching</option>
+          <option>Offline Coaching</option>
+          <option>Hybrid</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Target Departments</label>
+        <div class="check-group">
+          <div class="check-btn"><input type="checkbox" id="deptRevenue"><label for="deptRevenue">Revenue</label></div>
+          <div class="check-btn"><input type="checkbox" id="deptPolice"><label for="deptPolice">Police</label></div>
+          <div class="check-btn"><input type="checkbox" id="deptEducation"><label for="deptEducation">Education</label></div>
+          <div class="check-btn"><input type="checkbox" id="deptHealth"><label for="deptHealth">Health</label></div>
+          <div class="check-btn"><input type="checkbox" id="deptAdmin"><label for="deptAdmin">Administration</label></div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="prevStep(4)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(4)">Next: Documents →</button>
+    </div>
+  </div>
+</div>
