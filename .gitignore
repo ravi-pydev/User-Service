@@ -332,3 +332,5 @@ query.es
 
 ## GeoIP2-City.mmdb
 *.mmdb
+
+*.claude

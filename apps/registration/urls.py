@@ -4,5 +4,7 @@ from django.urls import path
 from apps.registration.api import controller as user_controller 
 
 user_urlpatterns = [
-    path('home/', user_controller.Home.as_view()),
+    path('home/', user_controller.Home.as_view(), name='registration-home'),
+    path('home/step/<int:step>/', user_controller.RegistrationStepView.as_view(), name='registration-step'),
+    path('home/success/', user_controller.RegistrationSuccessView.as_view(), name='registration-success'),
 ]
