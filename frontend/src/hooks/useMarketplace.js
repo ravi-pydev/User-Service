@@ -1,0 +1,303 @@
+import { useState, useCallback } from 'react';
+import { apiFetch } from '../api/client.js';
+
+/**
+ * useMarketplace — central state and async logic for the template marketplace.
+ *
+ * Encapsulates all state and side-effects that were previously managed in the
+ * monolithic app.js, exposing them as a single hook that components can consume.
+ *
+ * @returns {object} All state values and action functions.
+ */
+export default function useMarketplace() {
+  // ── User ──────────────────────────────────────────────────────────────────
+  const [user, setUser] = useState(null);
+
+  // ── Template catalogue ────────────────────────────────────────────────────
+  const [templates, setTemplates] = useState([]);
+  const [templateCount, setTemplateCount] = useState(0);
+  const [recent, setRecent] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [availableTypes, setAvailableTypes] = useState([]);
+
+  // ── Builder ───────────────────────────────────────────────────────────────
+  const [activeTemplate, setActiveTemplate] = useState(null);
+  const [customBlocks, setCustomBlocks] = useState([]);
+  const [previewMode, setPreviewMode] = useState(false);
+
+  // ── Filters ───────────────────────────────────────────────────────────────
+  const [filters, setFilters] = useState({ search: '', category: '', type: '' });
+
+  // ── Premium modal ─────────────────────────────────────────────────────────
+  const [pendingPremiumTemplateId, setPendingPremiumTemplateId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // ── Status / feedback messages ────────────────────────────────────────────
+  const [topbarStatus, setTopbarStatus] = useState('');
+  const [builderFeedback, setBuilderFeedback] = useState('');
+  const [modalFeedback, setModalFeedback] = useState('');
+
+  // ── Internal helpers ──────────────────────────────────────────────────────
+
+  /**
+   * Build the query string from the current filters object.
+   * @param {object} f - filters object (defaults to current state)
+   */
+  const buildQuery = useCallback((f) => {
+    const params = new URLSearchParams();
+    if (f.search) params.set('search', f.search);
+    if (f.category) params.set('category', f.category);
+    if (f.type) params.set('type', f.type);
+    const qs = params.toString();
+    return qs ? `?${qs}` : '';
+  }, []);
+
+  // ── Public actions ────────────────────────────────────────────────────────
+
+  /**
+   * Load templates from the API using the current filters.
+   * Updates templates, templateCount, recent, favorites, and availableTypes.
+   */
+  const loadMarketplace = useCallback(async (overrideFilters) => {
+    const activeFilters = overrideFilters ?? filters;
+    try {
+      const data = await apiFetch(`/api/templates/${buildQuery(activeFilters)}`);
+      setTemplates(data.templates ?? []);
+      setTemplateCount(data.templates?.length ?? 0);
+      setRecent(data.recently_used ?? []);
+      setFavorites(data.favorites ?? []);
+      setAvailableTypes(data.available_types ?? []);
+    } catch (err) {
+      setTopbarStatus('Unable to load the marketplace.');
+      console.error('loadMarketplace error', err);
+    }
+  }, [filters, buildQuery]);
+
+  /**
+   * Bootstrap the app: fetch the current user and the marketplace in parallel.
+   */
+  const bootstrap = useCallback(async () => {
+    try {
+      const [userData] = await Promise.all([
+        apiFetch('/api/user/'),
+        loadMarketplace(),
+      ]);
+      setUser(userData);
+    } catch (err) {
+      setTopbarStatus('Unable to load the marketplace.');
+      console.error('bootstrap error', err);
+    }
+  }, [loadMarketplace]);
+
+  /**
+   * Open a template in the builder.
+   * If the template is premium and the user is not premium, open the upgrade modal.
+   * @param {number|string} id - template id
+   */
+  const useTemplate = useCallback(async (id) => {
+    try {
+      const data = await apiFetch(`/api/templates/${id}/use/`, { method: 'POST' });
+      setActiveTemplate(data);
+      setCustomBlocks([]);
+      setPreviewMode(false);
+      setBuilderFeedback('');
+      setTopbarStatus(`Opened: ${data.name}`);
+    } catch (err) {
+      if (err?.status === 403 && err?.payload?.code === 'premium_required') {
+        setPendingPremiumTemplateId(id);
+        setIsModalOpen(true);
+        setModalFeedback('');
+      } else {
+        setTopbarStatus('Failed to open template.');
+        console.error('useTemplate error', err);
+      }
+    }
+  }, []);
+
+  /**
+   * Toggle the favourite state of a template.
+   * @param {number|string} id - template id
+   */
+  const toggleFavorite = useCallback(async (id) => {
+    try {
+      const data = await apiFetch(`/api/templates/${id}/favorite/`, { method: 'POST' });
+      // Refresh the catalogue so the favorites list stays in sync.
+      await loadMarketplace();
+      setTopbarStatus(data.is_favorite ? 'Added to favourites.' : 'Removed from favourites.');
+    } catch (err) {
+      setTopbarStatus('Failed to update favourite.');
+      console.error('toggleFavorite error', err);
+    }
+  }, [loadMarketplace]);
+
+  /**
+   * Run the mock premium upgrade flow.
+   * @param {'success'|'failure'} outcome
+   */
+  const runMockUpgrade = useCallback(async (outcome) => {
+    try {
+      const data = await apiFetch('/api/user/upgrade/', {
+        method: 'POST',
+        body: JSON.stringify({ outcome }),
+      });
+
+      if (data.payment_status === 'success') {
+        setUser(data.user);
+        setModalFeedback('Premium unlocked! Opening your template…');
+
+        // If there was a pending template, open it now.
+        if (pendingPremiumTemplateId !== null) {
+          const id = pendingPremiumTemplateId;
+          setPendingPremiumTemplateId(null);
+          setIsModalOpen(false);
+          await useTemplate(id);
+        } else {
+          setIsModalOpen(false);
+        }
+      } else {
+        setModalFeedback('Payment failed. Please try again.');
+      }
+    } catch (err) {
+      setModalFeedback('An error occurred. Please try again.');
+      console.error('runMockUpgrade error', err);
+    }
+  }, [pendingPremiumTemplateId, useTemplate]);
+
+  /**
+   * Add a custom block to the builder.
+   * @param {'text'|'image'|'divider'} type
+   */
+  const addBlock = useCallback((type) => {
+    setCustomBlocks((prev) => [...prev, { type, id: Date.now() }]);
+    setBuilderFeedback(`Added ${type} block.`);
+  }, []);
+
+  /**
+   * Remove the last custom block from the builder.
+   */
+  const removeLastBlock = useCallback(() => {
+    setCustomBlocks((prev) => {
+      if (prev.length === 0) return prev;
+      return prev.slice(0, -1);
+    });
+    setBuilderFeedback('Removed last block.');
+  }, []);
+
+  /**
+   * Reset the builder: clear the active template and all custom blocks.
+   */
+  const resetBuilder = useCallback(() => {
+    setActiveTemplate(null);
+    setCustomBlocks([]);
+    setPreviewMode(false);
+    setBuilderFeedback('');
+    setTopbarStatus('');
+  }, []);
+
+  /**
+   * Submit the current form with the provided form data.
+   * @param {object} formData - key/value pairs from the form
+   */
+  const submitCurrentForm = useCallback(async (formData) => {
+    if (!activeTemplate) {
+      setBuilderFeedback('No active template to submit.');
+      return;
+    }
+    try {
+      const data = await apiFetch(`/api/templates/${activeTemplate.id}/submit/`, {
+        method: 'POST',
+        body: JSON.stringify({ form_data: formData }),
+      });
+      setBuilderFeedback(`Submitted! (ID: ${data.submission_id})`);
+      setTopbarStatus('Form submitted successfully.');
+    } catch (err) {
+      setBuilderFeedback('Submission failed. Please try again.');
+      console.error('submitCurrentForm error', err);
+    }
+  }, [activeTemplate]);
+
+  /**
+   * Clear all active filters and reload the marketplace.
+   */
+  const clearFilters = useCallback(() => {
+    const cleared = { search: '', category: '', type: '' };
+    setFilters(cleared);
+    loadMarketplace(cleared);
+  }, [loadMarketplace]);
+
+  /**
+   * Show all templates (alias for clearFilters).
+   */
+  const showAllTemplates = useCallback(() => {
+    clearFilters();
+  }, [clearFilters]);
+
+  /**
+   * Show only premium templates.
+   */
+  const showPremiumTemplates = useCallback(() => {
+    const premiumFilters = { search: '', category: 'premium', type: '' };
+    setFilters(premiumFilters);
+    loadMarketplace(premiumFilters);
+  }, [loadMarketplace]);
+
+  /**
+   * Switch the builder to preview mode.
+   */
+  const jumpToPreviewMode = useCallback(() => {
+    setPreviewMode(true);
+  }, []);
+
+  /**
+   * Switch the builder to edit mode.
+   */
+  const jumpToEditMode = useCallback(() => {
+    setPreviewMode(false);
+  }, []);
+
+  /**
+   * Close the premium upgrade modal.
+   */
+  const closePremiumModal = useCallback(() => {
+    setIsModalOpen(false);
+    setPendingPremiumTemplateId(null);
+    setModalFeedback('');
+  }, []);
+
+  // ── Return value ──────────────────────────────────────────────────────────
+  return {
+    // State
+    user,
+    templates,
+    templateCount,
+    recent,
+    favorites,
+    availableTypes,
+    activeTemplate,
+    customBlocks,
+    previewMode,
+    filters,
+    pendingPremiumTemplateId,
+    topbarStatus,
+    builderFeedback,
+    modalFeedback,
+    isModalOpen,
+
+    // Actions
+    loadMarketplace,
+    bootstrap,
+    useTemplate,
+    toggleFavorite,
+    runMockUpgrade,
+    addBlock,
+    removeLastBlock,
+    resetBuilder,
+    submitCurrentForm,
+    clearFilters,
+    showAllTemplates,
+    showPremiumTemplates,
+    jumpToPreviewMode,
+    jumpToEditMode,
+    closePremiumModal,
+  };
+}

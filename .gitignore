@@ -334,3 +334,10 @@ query.es
 *.mmdb
 
 *.claude
+
+.kiro
+*.kiro
+
+# Frontend build output and dependencies
+frontend/dist/
+frontend/node_modules/
