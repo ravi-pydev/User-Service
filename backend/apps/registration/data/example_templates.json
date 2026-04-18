@@ -1,0 +1,373 @@
+[
+  {
+    "name": "Simple Signup",
+    "category": "basic",
+    "template_type": "Simple Registration",
+    "description": "A clean starter form for name, email, and password collection.",
+    "thumbnail": "SF",
+    "is_premium": false,
+    "accent_color": "#2563eb",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "full_name", "label": "Full name", "required": true, "placeholder": "Enter your name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "password", "name": "password", "label": "Password", "required": true, "placeholder": "Create a password" }
+      ]
+    }
+  },
+  {
+    "name": "Job Application",
+    "category": "basic",
+    "template_type": "Career",
+    "description": "Collect applicant details, experience, and job preferences in one place.",
+    "thumbnail": "JA",
+    "is_premium": false,
+    "accent_color": "#0f766e",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "candidate_name", "label": "Candidate name", "required": true, "placeholder": "Jane Doe" },
+        { "type": "email", "name": "candidate_email", "label": "Email", "required": true, "placeholder": "candidate@example.com" },
+        { "type": "dropdown", "name": "role", "label": "Role applied for", "required": true, "options": ["Frontend Engineer", "Backend Engineer", "Product Designer"] },
+        { "type": "date", "name": "available_from", "label": "Available from", "required": true }
+      ]
+    }
+  },
+  {
+    "name": "Event Registration",
+    "category": "basic",
+    "template_type": "Events",
+    "description": "Perfect for conferences, workshops, and community RSVP collections.",
+    "thumbnail": "ER",
+    "is_premium": false,
+    "accent_color": "#c2410c",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "attendee_name", "label": "Attendee name", "required": true, "placeholder": "Who is attending?" },
+        { "type": "email", "name": "attendee_email", "label": "Email", "required": true, "placeholder": "hello@example.com" },
+        { "type": "dropdown", "name": "ticket_type", "label": "Ticket type", "required": true, "options": ["General", "VIP", "Student"] },
+        { "type": "date", "name": "arrival_date", "label": "Arrival date", "required": false }
+      ]
+    }
+  },
+  {
+    "name": "Government Services",
+    "category": "basic",
+    "template_type": "Public Services",
+    "description": "A detailed citizen information form with address and document fields.",
+    "thumbnail": "GS",
+    "is_premium": false,
+    "accent_color": "#475569",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "citizen_name", "label": "Legal full name", "required": true, "placeholder": "As shown on ID" },
+        { "type": "date", "name": "date_of_birth", "label": "Date of birth", "required": true },
+        { "type": "text", "name": "national_id", "label": "National ID / SSN", "required": true, "placeholder": "Identification number" },
+        { "type": "dropdown", "name": "service_type", "label": "Requested service", "required": true, "options": ["Certificate", "License", "Permit"] }
+      ]
+    }
+  },
+  {
+    "name": "Premium Onboarding Flow",
+    "category": "premium",
+    "template_type": "Multi-step",
+    "description": "A guided multi-step onboarding journey with progress indicators.",
+    "thumbnail": "PO",
+    "is_premium": true,
+    "accent_color": "#7c3aed",
+    "schema": {
+      "layout": "multi-step",
+      "steps": ["Profile", "Preferences", "Confirmation"],
+      "fields": [
+        { "type": "text", "name": "company_name", "label": "Company name", "required": true, "step": 1, "placeholder": "Your organization" },
+        { "type": "email", "name": "work_email", "label": "Work email", "required": true, "step": 1, "placeholder": "team@example.com" },
+        { "type": "dropdown", "name": "team_size", "label": "Team size", "required": true, "step": 2, "options": ["1-10", "11-50", "51-200", "200+"] },
+        { "type": "date", "name": "go_live", "label": "Go-live target", "required": false, "step": 2 },
+        { "type": "text", "name": "success_metric", "label": "Primary success metric", "required": true, "step": 3, "placeholder": "What matters most?" }
+      ]
+    }
+  },
+  {
+    "name": "Premium Brand Intake",
+    "category": "premium",
+    "template_type": "Designer Intake",
+    "description": "Advanced intake with visual sections and a curated question flow.",
+    "thumbnail": "BI",
+    "is_premium": true,
+    "accent_color": "#db2777",
+    "schema": {
+      "layout": "multi-step",
+      "steps": ["Basics", "Audience", "Launch"],
+      "fields": [
+        { "type": "text", "name": "brand_name", "label": "Brand name", "required": true, "step": 1, "placeholder": "Brand or campaign name" },
+        { "type": "text", "name": "industry", "label": "Industry", "required": true, "step": 1, "placeholder": "e.g. Fintech" },
+        { "type": "dropdown", "name": "audience", "label": "Target audience", "required": true, "step": 2, "options": ["Consumers", "Businesses", "Internal teams"] },
+        { "type": "date", "name": "launch_date", "label": "Launch date", "required": false, "step": 3 },
+        { "type": "text", "name": "cta", "label": "Primary call to action", "required": true, "step": 3, "placeholder": "What should users do?" }
+      ]
+    }
+  },
+  {
+    "name": "Contact Us",
+    "category": "basic",
+    "template_type": "Support",
+    "description": "A simple contact form for customer inquiries, feedback, and support requests.",
+    "thumbnail": "CU",
+    "is_premium": false,
+    "accent_color": "#0284c7",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "name", "label": "Your name", "required": true, "placeholder": "Full name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "dropdown", "name": "subject", "label": "Subject", "required": true, "options": ["General Inquiry", "Technical Support", "Billing", "Partnership", "Other"] },
+        { "type": "textarea", "name": "message", "label": "Message", "required": true, "placeholder": "How can we help you?" }
+      ]
+    }
+  },
+  {
+    "name": "Newsletter Subscription",
+    "category": "basic",
+    "template_type": "Marketing",
+    "description": "Grow your mailing list with a minimal, conversion-focused subscription form.",
+    "thumbnail": "NS",
+    "is_premium": false,
+    "accent_color": "#16a34a",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "first_name", "label": "First name", "required": true, "placeholder": "Your first name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "dropdown", "name": "frequency", "label": "Email frequency", "required": false, "options": ["Daily", "Weekly", "Monthly"] },
+        { "type": "checkbox", "name": "agree_terms", "label": "I agree to receive marketing emails", "required": true }
+      ]
+    }
+  },
+  {
+    "name": "Medical Appointment",
+    "category": "basic",
+    "template_type": "Healthcare",
+    "description": "Book patient appointments with symptom details and insurance information.",
+    "thumbnail": "MA",
+    "is_premium": false,
+    "accent_color": "#0891b2",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "patient_name", "label": "Patient name", "required": true, "placeholder": "Full legal name" },
+        { "type": "date", "name": "dob", "label": "Date of birth", "required": true },
+        { "type": "text", "name": "phone", "label": "Phone number", "required": true, "placeholder": "+1 (555) 000-0000" },
+        { "type": "dropdown", "name": "department", "label": "Department", "required": true, "options": ["General Practice", "Cardiology", "Dermatology", "Orthopedics", "Pediatrics"] },
+        { "type": "date", "name": "appointment_date", "label": "Preferred date", "required": true },
+        { "type": "textarea", "name": "symptoms", "label": "Describe your symptoms", "required": false, "placeholder": "Brief description..." }
+      ]
+    }
+  },
+  {
+    "name": "Student Enrollment",
+    "category": "basic",
+    "template_type": "Education",
+    "description": "Enroll students in courses with academic background and program selection.",
+    "thumbnail": "SE",
+    "is_premium": false,
+    "accent_color": "#b45309",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "student_name", "label": "Student full name", "required": true, "placeholder": "As on official documents" },
+        { "type": "email", "name": "student_email", "label": "Student email", "required": true, "placeholder": "student@university.edu" },
+        { "type": "dropdown", "name": "program", "label": "Program", "required": true, "options": ["Computer Science", "Business Administration", "Data Science", "Design", "Engineering"] },
+        { "type": "dropdown", "name": "year", "label": "Year of study", "required": true, "options": ["1st Year", "2nd Year", "3rd Year", "4th Year", "Graduate"] },
+        { "type": "date", "name": "enrollment_date", "label": "Enrollment start date", "required": true }
+      ]
+    }
+  },
+  {
+    "name": "Product Feedback",
+    "category": "basic",
+    "template_type": "Survey",
+    "description": "Collect structured product feedback with ratings and open-ended responses.",
+    "thumbnail": "PF",
+    "is_premium": false,
+    "accent_color": "#9333ea",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "product_name", "label": "Product / Feature name", "required": true, "placeholder": "What are you reviewing?" },
+        { "type": "dropdown", "name": "rating", "label": "Overall rating", "required": true, "options": ["5 - Excellent", "4 - Good", "3 - Average", "2 - Poor", "1 - Very Poor"] },
+        { "type": "dropdown", "name": "would_recommend", "label": "Would you recommend this?", "required": true, "options": ["Definitely", "Probably", "Not sure", "Probably not", "Definitely not"] },
+        { "type": "textarea", "name": "what_worked", "label": "What worked well?", "required": false, "placeholder": "Tell us what you liked..." },
+        { "type": "textarea", "name": "improvements", "label": "What could be improved?", "required": false, "placeholder": "Any suggestions?" }
+      ]
+    }
+  },
+  {
+    "name": "Vendor Registration",
+    "category": "basic",
+    "template_type": "Business",
+    "description": "Onboard new vendors and suppliers with business details and compliance fields.",
+    "thumbnail": "VR",
+    "is_premium": false,
+    "accent_color": "#64748b",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "company_name", "label": "Company name", "required": true, "placeholder": "Legal entity name" },
+        { "type": "text", "name": "contact_person", "label": "Contact person", "required": true, "placeholder": "Primary contact" },
+        { "type": "email", "name": "business_email", "label": "Business email", "required": true, "placeholder": "contact@company.com" },
+        { "type": "text", "name": "tax_id", "label": "Tax ID / VAT number", "required": true, "placeholder": "Tax registration number" },
+        { "type": "dropdown", "name": "category", "label": "Vendor category", "required": true, "options": ["Technology", "Logistics", "Marketing", "Finance", "Operations"] },
+        { "type": "textarea", "name": "services", "label": "Services offered", "required": true, "placeholder": "Describe your services..." }
+      ]
+    }
+  },
+  {
+    "name": "Premium HR Onboarding",
+    "category": "premium",
+    "template_type": "HR",
+    "description": "Complete employee onboarding with personal details, tax forms, and equipment requests.",
+    "thumbnail": "HO",
+    "is_premium": true,
+    "accent_color": "#0f172a",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "employee_name", "label": "Full legal name", "required": true, "placeholder": "As on government ID" },
+        { "type": "email", "name": "work_email", "label": "Work email", "required": true, "placeholder": "name@company.com" },
+        { "type": "text", "name": "department", "label": "Department", "required": true, "placeholder": "e.g. Engineering" },
+        { "type": "text", "name": "manager", "label": "Reporting manager", "required": true, "placeholder": "Manager name" },
+        { "type": "date", "name": "start_date", "label": "Start date", "required": true },
+        { "type": "dropdown", "name": "employment_type", "label": "Employment type", "required": true, "options": ["Full-time", "Part-time", "Contract", "Intern"] },
+        { "type": "dropdown", "name": "equipment", "label": "Equipment needed", "required": true, "options": ["MacBook Pro", "MacBook Air", "Windows Laptop", "Linux Workstation"] },
+        { "type": "textarea", "name": "notes", "label": "Additional notes", "required": false, "placeholder": "Any special requirements?" }
+      ]
+    }
+  },
+  {
+    "name": "Premium Client Discovery",
+    "category": "premium",
+    "template_type": "Sales",
+    "description": "Deep-dive discovery form for sales teams to qualify and understand new clients.",
+    "thumbnail": "CD",
+    "is_premium": true,
+    "accent_color": "#be123c",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "client_name", "label": "Client / Company name", "required": true, "placeholder": "Organization name" },
+        { "type": "text", "name": "contact_name", "label": "Primary contact", "required": true, "placeholder": "Decision maker name" },
+        { "type": "email", "name": "contact_email", "label": "Contact email", "required": true, "placeholder": "contact@client.com" },
+        { "type": "dropdown", "name": "budget_range", "label": "Budget range", "required": true, "options": ["< $10k", "$10k - $50k", "$50k - $200k", "$200k+"] },
+        { "type": "dropdown", "name": "timeline", "label": "Project timeline", "required": true, "options": ["ASAP", "1-3 months", "3-6 months", "6-12 months", "Flexible"] },
+        { "type": "textarea", "name": "pain_points", "label": "Key pain points", "required": true, "placeholder": "What problems are you trying to solve?" },
+        { "type": "textarea", "name": "success_criteria", "label": "Success criteria", "required": true, "placeholder": "What does success look like?" }
+      ]
+    }
+  },
+  {
+    "name": "Premium Analytics Dashboard Setup",
+    "category": "premium",
+    "template_type": "Analytics",
+    "description": "Configure analytics tracking preferences, KPIs, and reporting schedules.",
+    "thumbnail": "AD",
+    "is_premium": true,
+    "accent_color": "#0e7490",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "project_name", "label": "Project name", "required": true, "placeholder": "Analytics project name" },
+        { "type": "text", "name": "website_url", "label": "Website URL", "required": true, "placeholder": "https://yoursite.com" },
+        { "type": "dropdown", "name": "primary_goal", "label": "Primary goal", "required": true, "options": ["Increase conversions", "Reduce churn", "Grow traffic", "Improve engagement", "Revenue growth"] },
+        { "type": "dropdown", "name": "reporting_frequency", "label": "Reporting frequency", "required": true, "options": ["Daily", "Weekly", "Bi-weekly", "Monthly"] },
+        { "type": "dropdown", "name": "data_retention", "label": "Data retention period", "required": true, "options": ["30 days", "90 days", "1 year", "Unlimited"] },
+        { "type": "textarea", "name": "custom_kpis", "label": "Custom KPIs to track", "required": false, "placeholder": "List your key metrics..." }
+      ]
+    }
+  },
+  {
+    "name": "Volunteer Sign-up",
+    "category": "basic",
+    "template_type": "Community",
+    "description": "Register volunteers for events, causes, and community programs.",
+    "thumbnail": "VS",
+    "is_premium": false,
+    "accent_color": "#15803d",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "volunteer_name", "label": "Full name", "required": true, "placeholder": "Your name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "text", "name": "phone", "label": "Phone number", "required": false, "placeholder": "+1 (555) 000-0000" },
+        { "type": "dropdown", "name": "availability", "label": "Availability", "required": true, "options": ["Weekdays", "Weekends", "Both", "Flexible"] },
+        { "type": "dropdown", "name": "area_of_interest", "label": "Area of interest", "required": true, "options": ["Education", "Environment", "Healthcare", "Food & Shelter", "Animal Welfare", "General"] },
+        { "type": "textarea", "name": "skills", "label": "Relevant skills", "required": false, "placeholder": "Any skills you'd like to contribute?" }
+      ]
+    }
+  },
+  {
+    "name": "Hotel Booking Request",
+    "category": "basic",
+    "template_type": "Hospitality",
+    "description": "Capture guest booking requests with room preferences and special requirements.",
+    "thumbnail": "HB",
+    "is_premium": false,
+    "accent_color": "#a16207",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "guest_name", "label": "Guest name", "required": true, "placeholder": "Full name" },
+        { "type": "email", "name": "guest_email", "label": "Email", "required": true, "placeholder": "guest@example.com" },
+        { "type": "text", "name": "phone", "label": "Phone", "required": true, "placeholder": "+1 (555) 000-0000" },
+        { "type": "date", "name": "check_in", "label": "Check-in date", "required": true },
+        { "type": "date", "name": "check_out", "label": "Check-out date", "required": true },
+        { "type": "dropdown", "name": "room_type", "label": "Room type", "required": true, "options": ["Standard", "Deluxe", "Suite", "Family Room", "Penthouse"] },
+        { "type": "dropdown", "name": "guests_count", "label": "Number of guests", "required": true, "options": ["1", "2", "3", "4", "5+"] },
+        { "type": "textarea", "name": "special_requests", "label": "Special requests", "required": false, "placeholder": "Any special requirements?" }
+      ]
+    }
+  },
+  {
+    "name": "Premium Legal Intake",
+    "category": "premium",
+    "template_type": "Legal",
+    "description": "Structured client intake for law firms with case details and conflict checks.",
+    "thumbnail": "LI",
+    "is_premium": true,
+    "accent_color": "#1e3a5f",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "client_name", "label": "Client full name", "required": true, "placeholder": "Legal name" },
+        { "type": "email", "name": "client_email", "label": "Email address", "required": true, "placeholder": "client@example.com" },
+        { "type": "text", "name": "phone", "label": "Phone number", "required": true, "placeholder": "+1 (555) 000-0000" },
+        { "type": "dropdown", "name": "matter_type", "label": "Matter type", "required": true, "options": ["Corporate", "Employment", "Real Estate", "Intellectual Property", "Litigation", "Family Law"] },
+        { "type": "textarea", "name": "case_summary", "label": "Case summary", "required": true, "placeholder": "Brief description of your legal matter..." },
+        { "type": "dropdown", "name": "urgency", "label": "Urgency level", "required": true, "options": ["Immediate (within 24h)", "Urgent (within a week)", "Standard (within a month)", "Planning ahead"] },
+        { "type": "checkbox", "name": "conflict_check", "label": "I confirm no conflict of interest with this firm", "required": true }
+      ]
+    }
+  },
+  {
+    "name": "Workshop Registration",
+    "category": "basic",
+    "template_type": "Events",
+    "description": "Register participants for workshops, training sessions, and webinars.",
+    "thumbnail": "WR",
+    "is_premium": false,
+    "accent_color": "#7e22ce",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "participant_name", "label": "Participant name", "required": true, "placeholder": "Full name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "text", "name": "organization", "label": "Organization", "required": false, "placeholder": "Company or institution" },
+        { "type": "dropdown", "name": "session", "label": "Preferred session", "required": true, "options": ["Morning (9am - 12pm)", "Afternoon (1pm - 4pm)", "Evening (5pm - 8pm)"] },
+        { "type": "dropdown", "name": "experience_level", "label": "Experience level", "required": true, "options": ["Beginner", "Intermediate", "Advanced"] },
+        { "type": "textarea", "name": "learning_goals", "label": "What do you hope to learn?", "required": false, "placeholder": "Your learning objectives..." }
+      ]
+    }
+  }
+]
