@@ -23,10 +23,18 @@ export default function useMarketplace() {
   // ── Builder ───────────────────────────────────────────────────────────────
   const [activeTemplate, setActiveTemplate] = useState(null);
   const [customBlocks, setCustomBlocks] = useState([]);
-  const [previewMode, setPreviewMode] = useState(false);
+  const [previewMode, setPreviewMode] = useState(true);
 
   // ── Filters ───────────────────────────────────────────────────────────────
-  const [filters, setFilters] = useState({ search: '', category: '', type: '' });
+  const [filters, setFilters] = useState({
+    search: '',
+    category: '',
+    type: '',
+    layout: '',
+    field_type: '',
+    has_required: false,
+    field_count: '',
+  });
 
   // ── Premium modal ─────────────────────────────────────────────────────────
   const [pendingPremiumTemplateId, setPendingPremiumTemplateId] = useState(null);
@@ -45,9 +53,13 @@ export default function useMarketplace() {
    */
   const buildQuery = useCallback((f) => {
     const params = new URLSearchParams();
-    if (f.search) params.set('search', f.search);
-    if (f.category) params.set('category', f.category);
-    if (f.type) params.set('type', f.type);
+    if (f.search)       params.set('search', f.search);
+    if (f.category)     params.set('category', f.category);
+    if (f.type)         params.set('type', f.type);
+    if (f.layout)       params.set('layout', f.layout);
+    if (f.field_type)   params.set('field_type', f.field_type);
+    if (f.has_required) params.set('has_required', 'true');
+    if (f.field_count)  params.set('field_count', f.field_count);
     const qs = params.toString();
     return qs ? `?${qs}` : '';
   }, []);
@@ -184,9 +196,20 @@ export default function useMarketplace() {
   }, []);
 
   /**
-   * Reset the builder: clear the active template and all custom blocks.
+   * Reset the builder: discard custom blocks and mode changes but keep the
+   * active template open. Used by the Reset button inside the modal.
    */
   const resetBuilder = useCallback(() => {
+    setCustomBlocks([]);
+    setPreviewMode(true);
+    setBuilderFeedback('');
+  }, []);
+
+  /**
+   * Close the builder: fully clear the active template and all state.
+   * Used when the modal is closed.
+   */
+  const closeBuilder = useCallback(() => {
     setActiveTemplate(null);
     setCustomBlocks([]);
     setPreviewMode(false);
@@ -220,7 +243,15 @@ export default function useMarketplace() {
    * Clear all active filters and reload the marketplace.
    */
   const clearFilters = useCallback(() => {
-    const cleared = { search: '', category: '', type: '' };
+    const cleared = {
+      search: '',
+      category: '',
+      type: '',
+      layout: '',
+      field_type: '',
+      has_required: false,
+      field_count: '',
+    };
     setFilters(cleared);
     loadMarketplace(cleared);
   }, [loadMarketplace]);
@@ -236,23 +267,33 @@ export default function useMarketplace() {
    * Show only premium templates.
    */
   const showPremiumTemplates = useCallback(() => {
-    const premiumFilters = { search: '', category: 'premium', type: '' };
+    const premiumFilters = {
+      search: '',
+      category: 'premium',
+      type: '',
+      layout: '',
+      field_type: '',
+      has_required: false,
+      field_count: '',
+    };
     setFilters(premiumFilters);
     loadMarketplace(premiumFilters);
   }, [loadMarketplace]);
 
   /**
-   * Switch the builder to preview mode.
+   * Switch the builder to preview mode. Clears stale feedback so submission starts fresh.
    */
   const jumpToPreviewMode = useCallback(() => {
     setPreviewMode(true);
+    setBuilderFeedback('');
   }, []);
 
   /**
-   * Switch the builder to edit mode.
+   * Switch the builder to edit mode. Clears any stale feedback messages.
    */
   const jumpToEditMode = useCallback(() => {
     setPreviewMode(false);
+    setBuilderFeedback('');
   }, []);
 
   /**
@@ -292,6 +333,7 @@ export default function useMarketplace() {
     addBlock,
     removeLastBlock,
     resetBuilder,
+    closeBuilder,
     submitCurrentForm,
     clearFilters,
     showAllTemplates,

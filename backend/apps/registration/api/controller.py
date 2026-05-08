@@ -69,6 +69,10 @@ class TemplateListView(APIView):
         category = request.query_params.get("category")
         template_type = request.query_params.get("type")
         search = request.query_params.get("search")
+        layout = request.query_params.get("layout")          # single-column | two-column | multi-step
+        field_type = request.query_params.get("field_type")  # text | email | dropdown | date | …
+        has_required = request.query_params.get("has_required")  # "true"
+        field_count = request.query_params.get("field_count")    # small | medium | large
 
         if category in {Template.CATEGORY_BASIC, Template.CATEGORY_PREMIUM}:
             queryset = queryset.filter(category=category)
@@ -83,7 +87,38 @@ class TemplateListView(APIView):
                 | Q(template_type__icontains=search)
             )
 
-        serializer = TemplateListSerializer(queryset, many=True, context={"user": user})
+        # ── JSON-based filters (evaluated in Python after the DB query) ──
+        # Fetch the candidate set once so we can inspect schema fields.
+        candidates = list(queryset)
+
+        if layout:
+            candidates = [t for t in candidates if t.schema.get("layout") == layout]
+
+        if field_type:
+            candidates = [
+                t for t in candidates
+                if any(f.get("type") == field_type for f in t.schema.get("fields", []))
+            ]
+
+        if has_required == "true":
+            candidates = [
+                t for t in candidates
+                if any(f.get("required") for f in t.schema.get("fields", []))
+            ]
+
+        if field_count:
+            def _in_range(t):
+                n = len(t.schema.get("fields", []))
+                if field_count == "small":
+                    return n <= 3
+                if field_count == "medium":
+                    return 4 <= n <= 6
+                if field_count == "large":
+                    return n >= 7
+                return True
+            candidates = [t for t in candidates if _in_range(t)]
+
+        serializer = TemplateListSerializer(candidates, many=True, context={"user": user})
         recent_items = RecentlyUsedTemplate.objects.select_related("template").filter(user=user)[:3]
         recent = TemplateListSerializer(
             [item.template for item in recent_items],

@@ -1,0 +1,368 @@
+{
+  "workspaceId": null,
+  "collectionId": null,
+  "environmentId": null,
+  "collection": {
+    "info": {
+      "name": "Registration Template Marketplace API",
+      "description": "API collection for the Registration Template Marketplace backend. Base URL: http://localhost:8000",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8000",
+        "type": "string"
+      },
+      {
+        "key": "template_id",
+        "value": "1",
+        "type": "string"
+      }
+    ],
+    "item": [
+      {
+        "name": "Health & Meta",
+        "item": [
+          {
+            "name": "Hello World",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/api/hello/",
+              "description": "Simple health-check endpoint."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Has message field', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('message');",
+                    "  pm.expect(body.message).to.eql('Hello, World!');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Marketplace Home",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/api/",
+              "description": "Returns a welcome message for the marketplace API."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Has message field', () => {",
+                    "  pm.expect(pm.response.json()).to.have.property('message');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "User",
+        "item": [
+          {
+            "name": "Get Current User",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/api/user/",
+              "description": "Returns the demo user profile including premium status and favorites count."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('User has required fields', () => {",
+                    "  const user = pm.response.json();",
+                    "  pm.expect(user).to.have.all.keys('id', 'username', 'email', 'is_premium', 'favorites_count');",
+                    "});",
+                    "pm.test('Username is demo_user', () => {",
+                    "  pm.expect(pm.response.json().username).to.eql('demo_user');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Upgrade User (success)",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/api/user/upgrade/",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"outcome\": \"success\"}"
+              },
+              "description": "Simulates a successful premium upgrade. Pass outcome=success to force success path."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Payment status is success', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body.payment_status).to.eql('success');",
+                    "  pm.expect(body.user.is_premium).to.be.true;",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Upgrade User (failure)",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/api/user/upgrade/",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"outcome\": \"failure\"}"
+              },
+              "description": "Simulates a failed payment. Returns 402."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 402', () => pm.response.to.have.status(402));",
+                    "pm.test('Payment status is failure', () => {",
+                    "  pm.expect(pm.response.json().payment_status).to.eql('failure');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Templates",
+        "item": [
+          {
+            "name": "List Templates",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/api/templates/",
+              "description": "Returns all templates along with recently_used, favorites, and available_types."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Response has required keys', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.all.keys('templates', 'recently_used', 'favorites', 'available_types');",
+                    "});",
+                    "pm.test('Templates is an array', () => {",
+                    "  pm.expect(pm.response.json().templates).to.be.an('array');",
+                    "});",
+                    "// Save first template id for downstream requests",
+                    "const templates = pm.response.json().templates;",
+                    "if (templates.length > 0) {",
+                    "  pm.collectionVariables.set('template_id', templates[0].id);",
+                    "}"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "List Templates – filter by category (basic)",
+            "request": {
+              "method": "GET",
+              "url": {
+                "raw": "{{base_url}}/api/templates/?category=basic",
+                "query": [{ "key": "category", "value": "basic" }]
+              },
+              "description": "Filter templates by category=basic."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('All returned templates are basic', () => {",
+                    "  pm.response.json().templates.forEach(t => {",
+                    "    pm.expect(t.category).to.eql('basic');",
+                    "  });",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "List Templates – search",
+            "request": {
+              "method": "GET",
+              "url": {
+                "raw": "{{base_url}}/api/templates/?search=contact",
+                "query": [{ "key": "search", "value": "contact" }]
+              },
+              "description": "Full-text search across name, description, and template_type."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Response is valid', () => {",
+                    "  pm.expect(pm.response.json().templates).to.be.an('array');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Get Template Detail",
+            "request": {
+              "method": "GET",
+              "url": "{{base_url}}/api/templates/{{template_id}}/",
+              "description": "Returns full template detail including schema. Returns 403 for premium templates when user is not premium."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200 or 403', () => {",
+                    "  pm.expect(pm.response.code).to.be.oneOf([200, 403]);",
+                    "});",
+                    "if (pm.response.code === 200) {",
+                    "  pm.test('Detail has schema field', () => {",
+                    "    pm.expect(pm.response.json()).to.have.property('schema');",
+                    "  });",
+                    "}"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Use Template",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/api/templates/{{template_id}}/use/",
+              "description": "Marks a template as recently used and returns its detail."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200 or 403', () => {",
+                    "  pm.expect(pm.response.code).to.be.oneOf([200, 403]);",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Toggle Favorite",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/api/templates/{{template_id}}/favorite/",
+              "description": "Adds or removes a template from the demo user's favorites. Returns {is_favorite: bool}."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                    "pm.test('Returns is_favorite boolean', () => {",
+                    "  const body = pm.response.json();",
+                    "  pm.expect(body).to.have.property('is_favorite');",
+                    "  pm.expect(body.is_favorite).to.be.a('boolean');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Submit Form",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/api/templates/{{template_id}}/submit/",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"form_data\": {\"name\": \"Jane Doe\", \"email\": \"jane@example.com\"}}"
+              },
+              "description": "Submits form data for a template. Returns 201 on success, 400 if form_data is empty, 403 for premium gate."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 201 or 403', () => {",
+                    "  pm.expect(pm.response.code).to.be.oneOf([201, 403]);",
+                    "});",
+                    "if (pm.response.code === 201) {",
+                    "  pm.test('Returns submission_id', () => {",
+                    "    pm.expect(pm.response.json()).to.have.property('submission_id');",
+                    "  });",
+                    "}"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "name": "Submit Form – empty body (400)",
+            "request": {
+              "method": "POST",
+              "url": "{{base_url}}/api/templates/{{template_id}}/submit/",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"form_data\": {}}"
+              },
+              "description": "Passing an empty form_data object should return 400."
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                    "pm.test('Error detail present', () => {",
+                    "  pm.expect(pm.response.json()).to.have.property('detail');",
+                    "});"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
