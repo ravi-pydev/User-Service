@@ -369,5 +369,225 @@
         { "type": "textarea", "name": "learning_goals", "label": "What do you hope to learn?", "required": false, "placeholder": "Your learning objectives..." }
       ]
     }
+  },
+  {
+    "name": "Property Inquiry",
+    "category": "basic",
+    "template_type": "Real Estate",
+    "description": "Capture buyer and renter inquiries with property preferences and budget details.",
+    "thumbnail": "PI",
+    "is_premium": false,
+    "accent_color": "#b45309",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "full_name", "label": "Full name", "required": true, "placeholder": "Your name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "text", "name": "phone", "label": "Phone number", "required": true, "placeholder": "+1 (555) 000-0000" },
+        { "type": "dropdown", "name": "intent", "label": "I am looking to", "required": true, "options": ["Buy", "Rent", "Invest"] },
+        { "type": "dropdown", "name": "property_type", "label": "Property type", "required": true, "options": ["Apartment", "House", "Condo", "Townhouse", "Commercial", "Land"] },
+        { "type": "dropdown", "name": "budget", "label": "Budget range", "required": true, "options": ["Under $200k", "$200k - $500k", "$500k - $1M", "$1M - $2M", "$2M+"] },
+        { "type": "dropdown", "name": "bedrooms", "label": "Bedrooms needed", "required": false, "options": ["Studio", "1", "2", "3", "4", "5+"] },
+        { "type": "textarea", "name": "notes", "label": "Additional requirements", "required": false, "placeholder": "Location preferences, must-haves, etc." }
+      ]
+    }
+  },
+  {
+    "name": "Fitness Class Booking",
+    "category": "basic",
+    "template_type": "Health & Fitness",
+    "description": "Book gym classes, personal training sessions, and wellness appointments.",
+    "thumbnail": "FC",
+    "is_premium": false,
+    "accent_color": "#dc2626",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "member_name", "label": "Member name", "required": true, "placeholder": "Your full name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "dropdown", "name": "class_type", "label": "Class type", "required": true, "options": ["Yoga", "HIIT", "Pilates", "Spin", "Strength Training", "Zumba", "Boxing"] },
+        { "type": "dropdown", "name": "instructor", "label": "Preferred instructor", "required": false, "options": ["No preference", "Alex", "Jordan", "Sam", "Taylor"] },
+        { "type": "date", "name": "class_date", "label": "Preferred date", "required": true },
+        { "type": "dropdown", "name": "time_slot", "label": "Time slot", "required": true, "options": ["6:00 AM", "8:00 AM", "10:00 AM", "12:00 PM", "5:00 PM", "7:00 PM"] },
+        { "type": "dropdown", "name": "fitness_level", "label": "Fitness level", "required": true, "options": ["Beginner", "Intermediate", "Advanced"] }
+      ]
+    }
+  },
+  {
+    "name": "Bug Report",
+    "category": "basic",
+    "template_type": "Tech Support",
+    "description": "Structured bug reporting form for software teams with reproduction steps and severity.",
+    "thumbnail": "BR",
+    "is_premium": false,
+    "accent_color": "#991b1b",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text", "name": "reporter_name", "label": "Your name", "required": true, "placeholder": "Full name" },
+        { "type": "email", "name": "reporter_email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "text", "name": "bug_title", "label": "Bug title", "required": true, "placeholder": "Short summary of the issue" },
+        { "type": "dropdown", "name": "severity", "label": "Severity", "required": true, "options": ["Critical", "High", "Medium", "Low"] },
+        { "type": "dropdown", "name": "environment", "label": "Environment", "required": true, "options": ["Production", "Staging", "Development", "Local"] },
+        { "type": "textarea", "name": "steps_to_reproduce", "label": "Steps to reproduce", "required": true, "placeholder": "1. Go to...\n2. Click on...\n3. See error" },
+        { "type": "textarea", "name": "expected_behavior", "label": "Expected behavior", "required": true, "placeholder": "What should have happened?" },
+        { "type": "textarea", "name": "actual_behavior", "label": "Actual behavior", "required": true, "placeholder": "What actually happened?" }
+      ]
+    }
+  },
+  {
+    "name": "Restaurant Reservation",
+    "category": "basic",
+    "template_type": "Hospitality",
+    "description": "Accept table reservations with party size, dietary needs, and occasion details.",
+    "thumbnail": "RR",
+    "is_premium": false,
+    "accent_color": "#c2410c",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text", "name": "guest_name", "label": "Guest name", "required": true, "placeholder": "Reservation name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "placeholder": "you@example.com" },
+        { "type": "text", "name": "phone", "label": "Phone number", "required": true, "placeholder": "+1 (555) 000-0000" },
+        { "type": "date", "name": "reservation_date", "label": "Reservation date", "required": true },
+        { "type": "dropdown", "name": "time", "label": "Preferred time", "required": true, "options": ["12:00 PM", "1:00 PM", "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"] },
+        { "type": "dropdown", "name": "party_size", "label": "Party size", "required": true, "options": ["1", "2", "3", "4", "5", "6", "7-10", "10+"] },
+        { "type": "dropdown", "name": "occasion", "label": "Special occasion", "required": false, "options": ["None", "Birthday", "Anniversary", "Business Dinner", "Date Night", "Other"] },
+        { "type": "textarea", "name": "dietary_requirements", "label": "Dietary requirements", "required": false, "placeholder": "Allergies, vegetarian, vegan, etc." }
+      ]
+    }
+  },
+  {
+    "name": "Premium E-Commerce Seller Onboarding",
+    "category": "premium",
+    "template_type": "E-Commerce",
+    "description": "Multi-step seller registration with store setup, payment details, and compliance verification.",
+    "thumbnail": "ES",
+    "is_premium": true,
+    "accent_color": "#f59e0b",
+    "schema": {
+      "layout": "multi-step",
+      "steps": ["Store Info", "Products", "Payments", "Compliance"],
+      "fields": [
+        { "type": "text", "name": "store_name", "label": "Store name", "required": true, "step": 1, "placeholder": "Your shop name" },
+        { "type": "text", "name": "store_url", "label": "Desired store URL", "required": true, "step": 1, "placeholder": "yourstore.marketplace.com" },
+        { "type": "dropdown", "name": "store_category", "label": "Primary category", "required": true, "step": 1, "options": ["Fashion", "Electronics", "Home & Garden", "Sports", "Beauty", "Books", "Food & Beverage"] },
+        { "type": "dropdown", "name": "product_count", "label": "Number of products", "required": true, "step": 2, "options": ["1-10", "11-50", "51-200", "200-1000", "1000+"] },
+        { "type": "dropdown", "name": "fulfillment", "label": "Fulfillment method", "required": true, "step": 2, "options": ["Self-fulfilled", "Third-party logistics", "Dropshipping", "Digital delivery"] },
+        { "type": "dropdown", "name": "payment_method", "label": "Payout preference", "required": true, "step": 3, "options": ["Bank transfer", "PayPal", "Stripe", "Check"] },
+        { "type": "text", "name": "tax_id", "label": "Tax ID / EIN", "required": true, "step": 4, "placeholder": "Business tax number" },
+        { "type": "checkbox", "name": "terms_accepted", "label": "I agree to the seller terms and conditions", "required": true, "step": 4 }
+      ]
+    }
+  },
+  {
+    "name": "Premium Research Study Enrollment",
+    "category": "premium",
+    "template_type": "Research",
+    "description": "Enroll participants in academic or clinical research studies with eligibility screening.",
+    "thumbnail": "RS",
+    "is_premium": true,
+    "accent_color": "#065f46",
+    "schema": {
+      "layout": "multi-step",
+      "steps": ["Personal Info", "Eligibility", "Consent"],
+      "fields": [
+        { "type": "text", "name": "participant_name", "label": "Full name", "required": true, "step": 1, "placeholder": "Legal name" },
+        { "type": "email", "name": "email", "label": "Email address", "required": true, "step": 1, "placeholder": "you@example.com" },
+        { "type": "date", "name": "date_of_birth", "label": "Date of birth", "required": true, "step": 1 },
+        { "type": "dropdown", "name": "age_group", "label": "Age group", "required": true, "step": 2, "options": ["18-24", "25-34", "35-44", "45-54", "55-64", "65+"] },
+        { "type": "dropdown", "name": "health_status", "label": "General health status", "required": true, "step": 2, "options": ["Excellent", "Good", "Fair", "Poor"] },
+        { "type": "dropdown", "name": "prior_participation", "label": "Prior study participation", "required": true, "step": 2, "options": ["Never", "Once", "Multiple times"] },
+        { "type": "textarea", "name": "medical_conditions", "label": "Relevant medical conditions", "required": false, "step": 2, "placeholder": "List any conditions relevant to this study..." },
+        { "type": "checkbox", "name": "informed_consent", "label": "I have read and understood the study information sheet and consent to participate", "required": true, "step": 3 },
+        { "type": "checkbox", "name": "data_consent", "label": "I consent to my anonymised data being used for research purposes", "required": true, "step": 3 }
+      ]
+    }
+  },
+  {
+    "name": "Premium Real Estate Listing",
+    "category": "premium",
+    "template_type": "Real Estate",
+    "description": "Full property listing intake with detailed specs, media uploads, and pricing strategy.",
+    "thumbnail": "RL",
+    "is_premium": true,
+    "accent_color": "#1d4ed8",
+    "schema": {
+      "layout": "multi-step",
+      "steps": ["Property Details", "Features", "Pricing & Media"],
+      "fields": [
+        { "type": "text", "name": "property_address", "label": "Property address", "required": true, "step": 1, "placeholder": "Full street address" },
+        { "type": "dropdown", "name": "property_type", "label": "Property type", "required": true, "step": 1, "options": ["Single Family Home", "Condo", "Townhouse", "Multi-family", "Commercial", "Land"] },
+        { "type": "dropdown", "name": "listing_type", "label": "Listing type", "required": true, "step": 1, "options": ["For Sale", "For Rent", "For Lease"] },
+        { "type": "dropdown", "name": "bedrooms", "label": "Bedrooms", "required": true, "step": 2, "options": ["Studio", "1", "2", "3", "4", "5+"] },
+        { "type": "dropdown", "name": "bathrooms", "label": "Bathrooms", "required": true, "step": 2, "options": ["1", "1.5", "2", "2.5", "3", "3.5", "4+"] },
+        { "type": "text", "name": "square_footage", "label": "Square footage", "required": true, "step": 2, "placeholder": "e.g. 1850" },
+        { "type": "dropdown", "name": "parking", "label": "Parking", "required": false, "step": 2, "options": ["None", "Street", "1 car garage", "2 car garage", "3+ car garage"] },
+        { "type": "text", "name": "asking_price", "label": "Asking price ($)", "required": true, "step": 3, "placeholder": "e.g. 450000" },
+        { "type": "dropdown", "name": "negotiable", "label": "Price negotiable?", "required": true, "step": 3, "options": ["Yes", "No", "Somewhat"] },
+        { "type": "textarea", "name": "description", "label": "Property description", "required": true, "step": 3, "placeholder": "Highlight key features and selling points..." }
+      ]
+    }
+  },
+  {
+    "name": "KYC — Personal Details",
+    "category": "premium",
+    "template_type": "Identity & KYC",
+    "description": "Collect core personal information for identity verification — full name, contact details, date of birth, gender, and social category. Designed for government, banking, and financial onboarding flows. Uses the dark navy + orange accent theme for a professional look.",
+    "thumbnail": "PD",
+    "is_premium": true,
+    "accent_color": "#ea580c",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text",     "name": "full_name",     "label": "Full Name",                 "required": true,  "placeholder": "As per Aadhaar / ID Proof" },
+        { "type": "email",    "name": "email",         "label": "Email Address",             "required": true,  "placeholder": "example@email.com" },
+        { "type": "text",     "name": "mobile",        "label": "Mobile Number",             "required": true,  "placeholder": "+91 XXXXX XXXXX" },
+        { "type": "date",     "name": "date_of_birth", "label": "Date of Birth",             "required": true  },
+        { "type": "text",     "name": "guardian_name", "label": "Father's / Husband's Name", "required": false, "placeholder": "Guardian name" },
+        { "type": "dropdown", "name": "gender",        "label": "Gender",                    "required": true,  "options": ["Male", "Female", "Other", "Prefer not to say"] },
+        { "type": "dropdown", "name": "category",      "label": "Category",                  "required": true,  "options": ["General", "OBC", "SC", "ST", "EWS"] }
+      ]
+    }
+  },
+  {
+    "name": "KYC — Address & Contact",
+    "category": "premium",
+    "template_type": "Identity & KYC",
+    "description": "Capture complete residential address and contact details for KYC compliance. Includes address lines, city, state, PIN code, and residence type. Ideal as a standalone address verification form or as part of a multi-stage onboarding process.",
+    "thumbnail": "AC",
+    "is_premium": true,
+    "accent_color": "#ea580c",
+    "schema": {
+      "layout": "two-column",
+      "fields": [
+        { "type": "text",     "name": "address_line1",  "label": "Address Line 1",  "required": true,  "placeholder": "House / Flat No., Building Name" },
+        { "type": "text",     "name": "address_line2",  "label": "Address Line 2",  "required": false, "placeholder": "Street, Locality, Area" },
+        { "type": "text",     "name": "city",           "label": "City / District", "required": true,  "placeholder": "e.g. Mumbai" },
+        { "type": "text",     "name": "state",          "label": "State",           "required": true,  "placeholder": "e.g. Maharashtra" },
+        { "type": "text",     "name": "pincode",        "label": "PIN Code",        "required": true,  "placeholder": "6-digit PIN" },
+        { "type": "dropdown", "name": "residence_type", "label": "Residence Type",  "required": true,  "options": ["Owned", "Rented", "Company Provided", "Other"] }
+      ]
+    }
+  },
+  {
+    "name": "KYC — Documents & Declaration",
+    "category": "premium",
+    "template_type": "Identity & KYC",
+    "description": "Collect government-issued document numbers, proof types, and a formal declaration for KYC completion. Covers Aadhaar, PAN, ID proof, and address proof selection with a legally binding self-declaration checkbox. Final step in the KYC onboarding flow.",
+    "thumbnail": "DD",
+    "is_premium": true,
+    "accent_color": "#ea580c",
+    "schema": {
+      "layout": "single-column",
+      "fields": [
+        { "type": "text",     "name": "aadhaar_number", "label": "Aadhaar / National ID Number", "required": true,  "placeholder": "XXXX XXXX XXXX" },
+        { "type": "text",     "name": "pan_number",     "label": "PAN / Tax ID Number",          "required": false, "placeholder": "e.g. ABCDE1234F" },
+        { "type": "dropdown", "name": "id_proof_type",  "label": "ID Proof Document Type",       "required": true,  "options": ["Aadhaar Card", "Passport", "Voter ID", "Driving Licence", "NREGA Job Card"] },
+        { "type": "dropdown", "name": "address_proof",  "label": "Address Proof Document Type",  "required": true,  "options": ["Aadhaar Card", "Utility Bill", "Bank Statement", "Rent Agreement", "Passport"] },
+        { "type": "textarea", "name": "remarks",        "label": "Additional Remarks",           "required": false, "placeholder": "Any additional information you'd like to provide..." },
+        { "type": "checkbox", "name": "declaration",    "label": "I hereby declare that all the information provided above is true and correct to the best of my knowledge.", "required": true }
+      ]
+    }
   }
 ]
