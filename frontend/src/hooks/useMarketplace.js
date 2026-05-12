@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api/client.js';
 
 /**
@@ -35,6 +35,13 @@ export default function useMarketplace() {
     has_required: false,
     field_count: '',
   });
+  // Keep a ref in sync so loadMarketplace can always read the latest filters
+  // without needing them in its dependency array.
+  const filtersRef = useRef(filters);
+  const setFiltersAndRef = useCallback((next) => {
+    filtersRef.current = next;
+    setFilters(next);
+  }, []);
 
   // ── Premium modal ─────────────────────────────────────────────────────────
   const [pendingPremiumTemplateId, setPendingPremiumTemplateId] = useState(null);
@@ -44,6 +51,16 @@ export default function useMarketplace() {
   const [topbarStatus, setTopbarStatus] = useState('');
   const [builderFeedback, setBuilderFeedback] = useState('');
   const [modalFeedback, setModalFeedback] = useState('');
+
+  // Auto-clear topbarStatus after 3 seconds
+  const statusTimerRef = useRef(null);
+  const setTopbarStatusWithTimeout = useCallback((msg) => {
+    setTopbarStatus(msg);
+    if (statusTimerRef.current) clearTimeout(statusTimerRef.current);
+    if (msg) {
+      statusTimerRef.current = setTimeout(() => setTopbarStatus(''), 3000);
+    }
+  }, []);
 
   // ── Internal helpers ──────────────────────────────────────────────────────
 
@@ -69,9 +86,11 @@ export default function useMarketplace() {
   /**
    * Load templates from the API using the current filters.
    * Updates templates, templateCount, recent, favorites, and availableTypes.
+   * For logged-out users the API returns 401 — we catch it silently and
+   * leave the template list empty (the login modal will open via the 401 handler).
    */
   const loadMarketplace = useCallback(async (overrideFilters) => {
-    const activeFilters = overrideFilters ?? filters;
+    const activeFilters = overrideFilters ?? filtersRef.current;
     try {
       const data = await apiFetch(`/api/templates/${buildQuery(activeFilters)}`);
       setTemplates(data.templates ?? []);
@@ -79,24 +98,39 @@ export default function useMarketplace() {
       setRecent(data.recently_used ?? []);
       setFavorites(data.favorites ?? []);
       setAvailableTypes(data.available_types ?? []);
+      setTopbarStatus('');
     } catch (err) {
-      setTopbarStatus('Unable to load the marketplace.');
-      console.error('loadMarketplace error', err);
+      if (err?.status === 401) {
+        // Not logged in — silently show empty state; login modal handles the rest
+        setTemplates([]);
+        setTemplateCount(0);
+      } else {
+        setTopbarStatusWithTimeout('Unable to load the marketplace.');
+        console.error('loadMarketplace error', err);
+      }
     }
-  }, [filters, buildQuery]);
+  }, [buildQuery]);
 
   /**
-   * Bootstrap the app: fetch the current user and the marketplace in parallel.
+   * Bootstrap the app: load templates (always), and fetch the current user
+   * only if a token is present in localStorage.
    */
   const bootstrap = useCallback(async () => {
+    const hasToken = Boolean(localStorage.getItem('auth_token'));
     try {
-      const [userData] = await Promise.all([
-        apiFetch('/api/user/'),
-        loadMarketplace(),
-      ]);
-      setUser(userData);
+      if (hasToken) {
+        const [userData] = await Promise.all([
+          apiFetch('/api/user/'),
+          loadMarketplace(),
+        ]);
+        setUser(userData);
+      } else {
+        // Logged-out: just load templates (no auth required for listing)
+        await loadMarketplace();
+      }
     } catch (err) {
-      setTopbarStatus('Unable to load the marketplace.');
+      // If user fetch fails (expired token etc.) still try to show templates
+      try { await loadMarketplace(); } catch (_) { /* ignore */ }
       console.error('bootstrap error', err);
     }
   }, [loadMarketplace]);
@@ -113,14 +147,14 @@ export default function useMarketplace() {
       setCustomBlocks([]);
       setPreviewMode(false);
       setBuilderFeedback('');
-      setTopbarStatus(`Opened: ${data.name}`);
+      setTopbarStatusWithTimeout(`Opened: ${data.name}`);
     } catch (err) {
       if (err?.status === 403 && err?.payload?.code === 'premium_required') {
         setPendingPremiumTemplateId(id);
         setIsModalOpen(true);
         setModalFeedback('');
       } else {
-        setTopbarStatus('Failed to open template.');
+        setTopbarStatusWithTimeout('Failed to open template.');
         console.error('useTemplate error', err);
       }
     }
@@ -135,9 +169,9 @@ export default function useMarketplace() {
       const data = await apiFetch(`/api/templates/${id}/favorite/`, { method: 'POST' });
       // Refresh the catalogue so the favorites list stays in sync.
       await loadMarketplace();
-      setTopbarStatus(data.is_favorite ? 'Added to favourites.' : 'Removed from favourites.');
+      setTopbarStatusWithTimeout(data.is_favorite ? 'Added to favourites.' : 'Removed from favourites.');
     } catch (err) {
-      setTopbarStatus('Failed to update favourite.');
+      setTopbarStatusWithTimeout('Failed to update favourite.');
       console.error('toggleFavorite error', err);
     }
   }, [loadMarketplace]);
@@ -232,7 +266,7 @@ export default function useMarketplace() {
         body: JSON.stringify({ form_data: formData }),
       });
       setBuilderFeedback(`Submitted! (ID: ${data.submission_id})`);
-      setTopbarStatus('Form submitted successfully.');
+      setTopbarStatusWithTimeout('Form submitted successfully.');
     } catch (err) {
       setBuilderFeedback('Submission failed. Please try again.');
       console.error('submitCurrentForm error', err);
@@ -252,7 +286,7 @@ export default function useMarketplace() {
       has_required: false,
       field_count: '',
     };
-    setFilters(cleared);
+    setFiltersAndRef(cleared);
     loadMarketplace(cleared);
   }, [loadMarketplace]);
 
@@ -276,7 +310,7 @@ export default function useMarketplace() {
       has_required: false,
       field_count: '',
     };
-    setFilters(premiumFilters);
+    setFiltersAndRef(premiumFilters);
     loadMarketplace(premiumFilters);
   }, [loadMarketplace]);
 
@@ -341,5 +375,6 @@ export default function useMarketplace() {
     jumpToPreviewMode,
     jumpToEditMode,
     closePremiumModal,
+    setFilters: setFiltersAndRef,
   };
 }

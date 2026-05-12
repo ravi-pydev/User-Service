@@ -14,6 +14,7 @@ class Template(models.Model):
     template_type = models.CharField(max_length=80)
     description = models.TextField()
     thumbnail = models.CharField(max_length=16, blank=True)
+    thumbnail_url = models.CharField(max_length=255, blank=True, default='')
     is_premium = models.BooleanField(default=False)
     schema = models.JSONField(default=dict)
     accent_color = models.CharField(max_length=32, default="#1d4ed8")
@@ -29,6 +30,7 @@ class Template(models.Model):
 class User(models.Model):
     username = models.CharField(max_length=80, unique=True)
     email = models.EmailField(unique=True)
+    password_hash = models.CharField(max_length=255, default='')
     is_premium = models.BooleanField(default=False)
     favorite_templates = models.ManyToManyField(
         Template,
