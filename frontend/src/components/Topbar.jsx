@@ -1,12 +1,15 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import ProfileMenu from './ProfileMenu';
 
 /**
- * Topbar — top navigation bar for FormForge.
+ * Topbar — top navigation bar for the marketplace app.
  */
-export default function Topbar({ user, topbarStatus, onShowAll, onShowPremium, onLogin, onRegister, theme, onToggleTheme }) {
+export default function Topbar({ topbarStatus, onShowAll, onShowPremium, theme, onToggleTheme, onOpenLogin, onOpenSignup }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isPremiumActive = new URLSearchParams(location.search).get('category') === 'premium';
+  const { isAuthenticated } = useAuth();
 
   const handleHome = () => {
     onShowAll?.();
@@ -15,13 +18,13 @@ export default function Topbar({ user, topbarStatus, onShowAll, onShowPremium, o
 
   const handleAllTemplates = () => {
     onShowAll?.();
-    navigate('/');
+    navigate('/app');
   };
 
   return (
     <nav className="topbar" role="navigation" aria-label="Main navigation">
 
-      {/* Brand — click goes home */}
+      {/* Brand */}
       <button
         type="button"
         className="topbar-brand"
@@ -73,30 +76,18 @@ export default function Topbar({ user, topbarStatus, onShowAll, onShowPremium, o
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
 
-        {user ? (
-          <span className="topbar-user__info">
-            <span className="topbar-user__name">{user.username}</span>
-            <span className="tier-badge">{user.is_premium ? 'Premium' : 'Free'}</span>
-          </span>
+        {isAuthenticated ? (
+          /* Profile avatar + dropdown */
+          <ProfileMenu variant="topbar" />
         ) : (
-          <div className="topbar-auth">
-            <button
-              type="button"
-              className="topbar-auth__login-btn"
-              onClick={onLogin}
-              aria-label="Log in"
-            >
-              Log in
-            </button>
-            <button
-              type="button"
-              className="topbar-auth__register-btn"
-              onClick={onRegister}
-              aria-label="Create account"
-            >
-              Sign up
-            </button>
-          </div>
+          <button
+            type="button"
+            className="topbar-auth__register-btn"
+            onClick={onOpenSignup}
+            aria-label="Log in or create account"
+          >
+            Log in / Sign up
+          </button>
         )}
       </div>
 

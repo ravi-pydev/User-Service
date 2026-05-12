@@ -3,3 +3,6 @@ Django==6.0.4
 djangorestframework==3.17.1
 django-cors-headers==4.7.0
 sqlparse==0.5.5
+PyJWT>=2.8.0
+hypothesis>=6.100.0
+pytest-django>=4.8.0

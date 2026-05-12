@@ -530,7 +530,7 @@
     }
   },
   {
-    "name": "KYC — Personal Details",
+    "name": "Personal Details",
     "category": "premium",
     "template_type": "Identity & KYC",
     "description": "Collect core personal information for identity verification — full name, contact details, date of birth, gender, and social category. Designed for government, banking, and financial onboarding flows. Uses the dark navy + orange accent theme for a professional look.",
@@ -551,7 +551,7 @@
     }
   },
   {
-    "name": "KYC — Address & Contact",
+    "name": "Address & Contact",
     "category": "premium",
     "template_type": "Identity & KYC",
     "description": "Capture complete residential address and contact details for KYC compliance. Includes address lines, city, state, PIN code, and residence type. Ideal as a standalone address verification form or as part of a multi-stage onboarding process.",
@@ -571,7 +571,7 @@
     }
   },
   {
-    "name": "KYC — Documents & Declaration",
+    "name": "Documents & Declaration",
     "category": "premium",
     "template_type": "Identity & KYC",
     "description": "Collect government-issued document numbers, proof types, and a formal declaration for KYC completion. Covers Aadhaar, PAN, ID proof, and address proof selection with a legally binding self-declaration checkbox. Final step in the KYC onboarding flow.",

@@ -82,10 +82,9 @@ export default function BuilderWorkspace({
 
   const toggleFormTheme = () => setFormTheme((t) => (t === 'light' ? 'dark' : 'light'));
 
-  /* ── Shared toolbar controls (layout + form theme) ─────────────── */
-  const ToolbarControls = () => (
+  /* ── Toolbar controls JSX (not a component — avoids remount issues) */
+  const toolbarControls = (
     <div className="builder-toolbar-controls">
-      {/* Layout toggle */}
       <button
         type="button"
         className={`builder-layout-toggle${isTwoColumn ? ' builder-layout-toggle--active' : ''}`}
@@ -99,7 +98,6 @@ export default function BuilderWorkspace({
         {isTwoColumn ? '1 Col' : '2 Col'}
       </button>
 
-      {/* Form theme toggle */}
       <button
         type="button"
         className={`builder-form-theme-toggle${isDarkForm ? ' builder-form-theme-toggle--dark' : ''}`}
@@ -127,91 +125,67 @@ export default function BuilderWorkspace({
         </button>
       </div>
 
-      {/* ── Mode switcher ───────────────────────────────────────────── */}
-      <div className="builder-mode-switcher" role="group" aria-label="Builder mode">
-        <button
-          type="button"
-          className={`builder-mode-switcher__btn${!previewMode ? ' builder-mode-switcher__btn--active' : ''}`}
-          onClick={onEditMode}
-          aria-pressed={!previewMode}
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className={`builder-mode-switcher__btn${previewMode ? ' builder-mode-switcher__btn--active' : ''}`}
-          onClick={onPreviewMode}
-          aria-pressed={previewMode}
-        >
-          Preview
-        </button>
-      </div>
-
-      {/* ── Edit mode panel ─────────────────────────────────────────── */}
-      {!previewMode && (
-        <>
-          {isPremium ? (
-            <div className="builder-panel builder-panel--premium">
-              <div className="builder-panel__premium-header">
-                <span className="builder-panel__premium-icon">✦</span>
-                <span>Premium editor — drag fields to reorder, × to remove</span>
-              </div>
-
-              <div className="builder-panel__toolbar">
-                <div className="builder-panel__block-buttons">
-                  <button type="button" onClick={() => onAddBlock?.('text')}>+ Text</button>
-                  <button type="button" onClick={() => onAddBlock?.('image')}>+ Image</button>
-                  <button type="button" onClick={() => onAddBlock?.('divider')}>+ Divider</button>
-                </div>
-                <ToolbarControls />
-              </div>
-
-              <DragDropFieldEditor fields={orderedFields} onChange={setOrderedFields} />
-            </div>
-          ) : (
-            <div className="builder-panel">
-              <div className="builder-panel__toolbar">
-                <div className="builder-panel__block-buttons">
-                  <button type="button" onClick={() => onAddBlock?.('text')}>Add Text</button>
-                  <button type="button" onClick={() => onAddBlock?.('image')}>Add Image</button>
-                  <button type="button" onClick={() => onAddBlock?.('divider')}>Add Divider</button>
-                  <button type="button" onClick={onRemoveLastBlock} disabled={customBlocks.length === 0}>
-                    Remove Last
-                  </button>
-                </div>
-                <ToolbarControls />
-              </div>
-
-              {customBlocks.length > 0 && (
-                <ul className="builder-panel__block-list" aria-label="Custom blocks">
-                  {customBlocks.map((block) => (
-                    <li key={block.id} className="builder-panel__block-item">{block.type}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ── Preview mode toolbar (layout + theme toggles) ───────────── */}
-      {previewMode && (
-        <div className="builder-preview-toolbar">
-          <ToolbarControls />
+      {/* ── Mode switcher — only for premium ────────────────────────── */}
+      {isPremium && (
+        <div className="builder-mode-switcher" role="group" aria-label="Builder mode">
+          <button
+            type="button"
+            className={`builder-mode-switcher__btn${!previewMode ? ' builder-mode-switcher__btn--active' : ''}`}
+            onClick={onEditMode}
+            aria-pressed={!previewMode}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className={`builder-mode-switcher__btn${previewMode ? ' builder-mode-switcher__btn--active' : ''}`}
+            onClick={onPreviewMode}
+            aria-pressed={previewMode}
+          >
+            Preview
+          </button>
         </div>
       )}
 
-      {/* ── Feedback message — only in preview mode ─────────────────── */}
-      {previewMode && builderFeedback && (
+      {/* ── Edit mode panel — premium only ──────────────────────────── */}
+      {isPremium && !previewMode && (
+        <div className="builder-panel builder-panel--premium">
+          <div className="builder-panel__premium-header">
+            <span className="builder-panel__premium-icon">✦</span>
+            <span>Premium editor — drag fields to reorder, × to remove</span>
+          </div>
+
+          <div className="builder-panel__toolbar">
+            <div className="builder-panel__block-buttons">
+              <button type="button" onClick={() => onAddBlock?.('text')}>+ Text</button>
+              <button type="button" onClick={() => onAddBlock?.('image')}>+ Image</button>
+              <button type="button" onClick={() => onAddBlock?.('divider')}>+ Divider</button>
+            </div>
+            {toolbarControls}
+          </div>
+
+          <DragDropFieldEditor fields={orderedFields} onChange={setOrderedFields} />
+        </div>
+      )}
+
+      {/* ── Preview toolbar (layout + theme) ────────────────────────── */}
+      {(isPremium ? previewMode : true) && (
+        <div className="builder-preview-toolbar">
+          {toolbarControls}
+        </div>
+      )}
+
+      {/* ── Feedback message ────────────────────────────────────────── */}
+      {(isPremium ? previewMode : true) && builderFeedback && (
         <p className="builder-feedback" role="status">{builderFeedback}</p>
       )}
 
-      {/* ── Form preview — only in preview mode ─────────────────────── */}
-      {previewMode && (
+      {/* ── Form preview ────────────────────────────────────────────── */}
+      {(isPremium ? previewMode : true) && (
         <FormPreview
           activeTemplate={previewTemplate}
           customBlocks={remainingCustomBlocks}
-          previewMode={previewMode}
+          previewMode={true}
           onSubmit={onSubmitForm}
           overrideFields={isPremium ? orderedFields : null}
           formTheme={formTheme}

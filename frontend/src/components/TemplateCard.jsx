@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import TemplateIcon from './TemplateIcon';
 
 /**
  * TemplateCard — renders a single template card in the marketplace gallery.
@@ -20,9 +21,7 @@ export default function TemplateCard({ template, onUse, onToggleFavorite }) {
     template_type,
     is_premium,
     is_favorite,
-    thumbnail_url,
     accent_color,
-    thumbnail,
   } = template;
 
   const displayType = template_type ?? template.type;
@@ -30,29 +29,20 @@ export default function TemplateCard({ template, onUse, onToggleFavorite }) {
   return (
     <div
       className="template-card template-card--clickable"
-      onClick={() => navigate(`/templates/${id}`)}
+      onClick={() => navigate(`/app/templates/${id}`)}
       role="button"
       tabIndex={0}
       aria-label={`View details for ${name}`}
-      onKeyDown={(e) => e.key === 'Enter' && navigate(`/templates/${id}`)}
+      onKeyDown={(e) => e.key === 'Enter' && navigate(`/app/templates/${id}`)}
     >
 
-      {/* ── Thumbnail / accent thumb ────────────────────────────────────── */}
-      {thumbnail_url ? (
-        <img
-          className="template-card-thumbnail"
-          src={thumbnail_url}
-          alt={`${name} thumbnail`}
-        />
-      ) : thumbnail ? (
-        <div
-          className="template-card-thumb-placeholder"
-          style={{ background: accent_color ?? '#3b82f6' }}
-          aria-hidden="true"
-        >
-          {thumbnail}
-        </div>
-      ) : null}
+      {/* ── Thumbnail ──────────────────────────────────────────────────── */}
+      <TemplateIcon
+        templateType={displayType}
+        accentColor={accent_color}
+        name={name}
+        size="card"
+      />
 
       {/* ── Premium badge ──────────────────────────────────────────────── */}
       {is_premium && (

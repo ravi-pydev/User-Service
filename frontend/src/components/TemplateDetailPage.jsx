@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../api/client.js';
+import TemplateIcon from './TemplateIcon.jsx';
 
 /**
  * TemplateDetailPage — full detail view for a single template.
@@ -12,8 +13,9 @@ import { apiFetch } from '../api/client.js';
  *   user              {object|null}  - current user (to know premium status)
  *   onUse             {function}     - called with template.id to open in builder
  *   onToggleFavorite  {function}     - called with template.id to toggle favorite
+ *   onOpenLogin       {function}     - opens the login modal (for unauthenticated users)
  */
-export default function TemplateDetailPage({ user, onUse, onToggleFavorite }) {
+export default function TemplateDetailPage({ user, onUse, onToggleFavorite, onOpenLogin }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -29,8 +31,9 @@ export default function TemplateDetailPage({ user, onUse, onToggleFavorite }) {
       const data = await apiFetch(`/api/templates/${id}/`);
       setTemplate(data);
     } catch (err) {
-      if (err?.status === 403 && err?.payload?.code === 'premium_required') {
-        // Still show the template card info from list — but mark as locked
+      if (err?.status === 401) {
+        setError('login_required');
+      } else if (err?.status === 403 && err?.payload?.code === 'premium_required') {
         setError('premium_required');
       } else {
         setError('Failed to load template details.');
@@ -66,11 +69,33 @@ export default function TemplateDetailPage({ user, onUse, onToggleFavorite }) {
     );
   }
 
+  // ── Login required ───────────────────────────────────────────────────────
+  if (error === 'login_required') {
+    return (
+      <div className="detail-page detail-page--locked">
+        <button className="detail-page__back-btn" onClick={() => navigate('/app')}>
+          ← Back to gallery
+        </button>
+        <div className="detail-page__locked-banner">
+          <span style={{ fontSize: '2.5rem' }}>🔒</span>
+          <h1>Sign in to view this template</h1>
+          <p>Create a free account or log in to access template details.</p>
+          <button
+            className="detail-page__use-btn"
+            onClick={() => onOpenLogin?.()}
+          >
+            Log in / Sign up
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ── Premium locked (no schema returned) ─────────────────────────────────
   if (error === 'premium_required') {
     return (
       <div className="detail-page detail-page--locked">
-        <button className="detail-page__back-btn" onClick={() => navigate('/')}>
+        <button className="detail-page__back-btn" onClick={() => navigate('/app')}>
           ← Back to gallery
         </button>
         <div className="detail-page__locked-banner">
@@ -92,7 +117,7 @@ export default function TemplateDetailPage({ user, onUse, onToggleFavorite }) {
   if (error) {
     return (
       <div className="detail-page detail-page--error">
-        <button className="detail-page__back-btn" onClick={() => navigate('/')}>
+        <button className="detail-page__back-btn" onClick={() => navigate('/app')}>
           ← Back to gallery
         </button>
         <p className="detail-page__error-msg">{error}</p>
@@ -130,7 +155,7 @@ export default function TemplateDetailPage({ user, onUse, onToggleFavorite }) {
   return (
     <div className="detail-page">
       {/* ── Back navigation ──────────────────────────────────────────── */}
-      <button className="detail-page__back-btn" onClick={() => navigate('/')}>
+      <button className="detail-page__back-btn" onClick={() => navigate('/app')}>
         ← Back to gallery
       </button>
 
@@ -139,8 +164,13 @@ export default function TemplateDetailPage({ user, onUse, onToggleFavorite }) {
         className="detail-page__hero"
         style={{ borderLeftColor: accent_color }}
       >
-        <div className="detail-page__hero-thumb" style={{ background: accent_color }}>
-          {thumbnail}
+        <div className="detail-page__hero-thumb">
+          <TemplateIcon
+            templateType={template_type}
+            accentColor={accent_color}
+            name={name}
+            size="detail"
+          />
         </div>
 
         <div className="detail-page__hero-info">

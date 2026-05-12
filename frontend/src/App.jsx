@@ -2,18 +2,42 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import useMarketplace from './hooks/useMarketplace';
 import useTheme from './hooks/useTheme';
+import useAuth from './hooks/useAuth';
+import { registerOn401 } from './api/client';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import Topbar from './components/Topbar';
 import Sidebar from './components/Sidebar';
 import TemplateGallery from './components/TemplateGallery';
 import UseTemplateModal from './components/UseTemplateModal';
 import PremiumModal from './components/PremiumModal';
 import TemplateDetailPage from './components/TemplateDetailPage';
+import AuthModal from './components/AuthModal';
+import HomePage from './pages/HomePage';
+import { AuthProvider } from './auth/AuthContext';
 
-function AppShell() {
+/* ── Public homepage wrapper (Header + content + Footer) ─────────── */
+function PublicLayout({ children, onOpenLogin, onOpenSignup, theme, onToggleTheme }) {
+  return (
+    <div className="public-layout">
+      <Header
+        onOpenLogin={onOpenLogin}
+        onOpenSignup={onOpenSignup}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+      />
+      <main className="public-main">{children}</main>
+      <Footer />
+    </div>
+  );
+}
+
+/* ── App marketplace shell (Topbar + Sidebar + content) ──────────── */
+function AppShell({ onOpenLogin, onOpenSignup, theme, onToggleTheme }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const isDetailPage = location.pathname.startsWith('/templates/');
-  const { theme, toggleTheme } = useTheme();
+  const isDetailPage = location.pathname.startsWith('/app/templates/');
+  const { isAuthenticated } = useAuth();
 
   const {
     user,
@@ -58,15 +82,24 @@ function AppShell() {
 
     if (category === 'premium') {
       showPremiumTemplates();
-    } else if (location.pathname === '/' && !location.search) {
-      // Plain home — run bootstrap only on first load, otherwise just reload
+    } else if (location.pathname === '/app' && !location.search) {
       bootstrap();
     }
   }, [location.pathname, location.search]);
 
   const handleUseTemplate = async (id) => {
+    // Gate: unauthenticated users see the login modal instead
+    if (!isAuthenticated) {
+      onOpenLogin();
+      return;
+    }
     await useTemplate(id);
     setIsBuilderOpen(true);
+  };
+
+  const handleToggleFavorite = (id) => {
+    if (!isAuthenticated) { onOpenLogin(); return; }
+    toggleFavorite(id);
   };
 
   const handleCloseBuilder = () => {
@@ -76,46 +109,43 @@ function AppShell() {
 
   const handleShowAll = () => {
     showAllTemplates();
-    navigate('/');
+    navigate('/app');
   };
 
   const handleShowPremium = () => {
-    navigate('/?category=premium');
+    navigate('/app?category=premium');
   };
-
-  const handleLogin = () => alert('Login coming soon!');
-  const handleRegister = () => alert('Sign up coming soon!');
 
   return (
     <div className="app">
       <Topbar
-        user={user}
         topbarStatus={topbarStatus}
         onShowAll={handleShowAll}
         onShowPremium={handleShowPremium}
-        onLogin={handleLogin}
-        onRegister={handleRegister}
         theme={theme}
-        onToggleTheme={toggleTheme}
+        onToggleTheme={onToggleTheme}
+        onOpenLogin={onOpenLogin}
+        onOpenSignup={onOpenSignup}
       />
 
       <div className="app-body">
         {!isDetailPage && (
           <Sidebar
             filters={filters}
-            onSearchChange={(val) => loadMarketplace({ ...filters, search: val })}
+            onSearchChange={(val) => { const next = { ...filters, search: val }; setFilters(next); loadMarketplace(next); }}
             onCategoryChange={(val) => {
               const next = { ...filters, category: val };
-              if (val === 'premium') navigate('/?category=premium');
-              else navigate('/');
+              setFilters(next);
+              if (val === 'premium') navigate('/app?category=premium');
+              else navigate('/app');
               loadMarketplace(next);
             }}
-            onTypeChange={(val) => loadMarketplace({ ...filters, type: val })}
-            onLayoutChange={(val) => loadMarketplace({ ...filters, layout: val })}
-            onFieldTypeChange={(val) => loadMarketplace({ ...filters, field_type: val })}
-            onHasRequiredChange={(val) => loadMarketplace({ ...filters, has_required: val })}
-            onFieldCountChange={(val) => loadMarketplace({ ...filters, field_count: val })}
-            onClearFilters={() => { clearFilters(); navigate('/'); }}
+            onTypeChange={(val) => { const next = { ...filters, type: val }; setFilters(next); loadMarketplace(next); }}
+            onLayoutChange={(val) => { const next = { ...filters, layout: val }; setFilters(next); loadMarketplace(next); }}
+            onFieldTypeChange={(val) => { const next = { ...filters, field_type: val }; setFilters(next); loadMarketplace(next); }}
+            onHasRequiredChange={(val) => { const next = { ...filters, has_required: val }; setFilters(next); loadMarketplace(next); }}
+            onFieldCountChange={(val) => { const next = { ...filters, field_count: val }; setFilters(next); loadMarketplace(next); }}
+            onClearFilters={() => { clearFilters(); navigate('/app'); }}
             availableTypes={availableTypes}
             recent={recent}
             favorites={favorites}
@@ -126,12 +156,13 @@ function AppShell() {
         <main className={`app-main${isDetailPage ? ' app-main--full' : ''}`}>
           <Routes>
             <Route
-              path="/templates/:id"
+              path="templates/:id"
               element={
                 <TemplateDetailPage
                   user={user}
                   onUse={handleUseTemplate}
-                  onToggleFavorite={toggleFavorite}
+                  onToggleFavorite={handleToggleFavorite}
+                  onOpenLogin={onOpenLogin}
                 />
               }
             />
@@ -141,8 +172,9 @@ function AppShell() {
                 <TemplateGallery
                   templates={templates}
                   templateCount={templateCount}
+                  filters={filters}
                   onUse={handleUseTemplate}
-                  onToggleFavorite={toggleFavorite}
+                  onToggleFavorite={handleToggleFavorite}
                   isPremiumView={new URLSearchParams(location.search).get('category') === 'premium'}
                 />
               }
@@ -181,10 +213,71 @@ function AppShell() {
   );
 }
 
+/* ── Root — handles auth modal state and routing ─────────────────── */
+function Root() {
+  const { theme, toggleTheme } = useTheme();
+  const { registerOpenLogin } = useAuth();
+  const [authModal, setAuthModal] = useState(null); // null | 'login' | 'signup'
+
+  // Register so AuthContext.logout() and apiFetch 401s open the login modal
+  useEffect(() => {
+    const opener = () => setAuthModal('login');
+    registerOpenLogin(opener);
+    registerOn401(opener);
+  }, [registerOpenLogin]);
+
+  const openLogin = () => setAuthModal('login');
+  const openSignup = () => setAuthModal('signup');
+  const closeModal = () => setAuthModal(null);
+
+  return (
+    <>
+      <Routes>
+        {/* Public homepage */}
+        <Route
+          path="/"
+          element={
+            <PublicLayout
+              onOpenLogin={openLogin}
+              onOpenSignup={openSignup}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+            >
+              <HomePage onOpenSignup={openSignup} onOpenLogin={openLogin} />
+            </PublicLayout>
+          }
+        />
+
+        {/* Marketplace app — /app and /app/templates/:id */}
+        <Route
+          path="/app/*"
+          element={
+            <AppShell
+              onOpenLogin={openLogin}
+              onOpenSignup={openSignup}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+            />
+          }
+        />
+      </Routes>
+
+      {/* Auth modal — rendered at root level so it overlays everything */}
+      <AuthModal
+        isOpen={authModal !== null}
+        initialView={authModal ?? 'login'}
+        onClose={closeModal}
+      />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <AppShell />
+      <AuthProvider>
+        <Root />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

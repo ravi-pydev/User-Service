@@ -8,9 +8,13 @@ const STORAGE_KEY = 'formforge-theme';
  */
 export default function useTheme() {
   const getInitial = () => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return stored;
+      return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch {
+      return 'light';
+    }
   };
 
   const [theme, setTheme] = useState(getInitial);
