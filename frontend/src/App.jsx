@@ -14,6 +14,16 @@ import PremiumModal from './components/PremiumModal';
 import TemplateDetailPage from './components/TemplateDetailPage';
 import AuthModal from './components/AuthModal';
 import HomePage from './pages/HomePage';
+import AboutPage from './pages/static/AboutPage';
+import BlogPage from './pages/static/BlogPage';
+import CareersPage from './pages/static/CareersPage';
+import FeaturesPage from './pages/static/FeaturesPage';
+import DocumentationPage from './pages/static/DocumentationPage';
+import HelpCenterPage from './pages/static/HelpCenterPage';
+import ContactPage from './pages/static/ContactPage';
+import PrivacyPolicyPage from './pages/static/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/static/TermsOfServicePage';
+import CookiePolicyPage from './pages/static/CookiePolicyPage';
 import { AuthProvider } from './auth/AuthContext';
 
 /* ── Public homepage wrapper (Header + content + Footer) ─────────── */
@@ -247,6 +257,35 @@ function Root() {
             </PublicLayout>
           }
         />
+
+        {/* Static pages */}
+        {[
+          { path: '/about',         element: <AboutPage /> },
+          { path: '/blog',          element: <BlogPage /> },
+          { path: '/careers',       element: <CareersPage /> },
+          { path: '/features',      element: <FeaturesPage /> },
+          { path: '/docs',          element: <DocumentationPage /> },
+          { path: '/help',          element: <HelpCenterPage /> },
+          { path: '/contact',       element: <ContactPage /> },
+          { path: '/privacy',       element: <PrivacyPolicyPage /> },
+          { path: '/terms',         element: <TermsOfServicePage /> },
+          { path: '/cookies',       element: <CookiePolicyPage /> },
+        ].map(({ path, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <PublicLayout
+                onOpenLogin={openLogin}
+                onOpenSignup={openSignup}
+                theme={theme}
+                onToggleTheme={toggleTheme}
+              >
+                {element}
+              </PublicLayout>
+            }
+          />
+        ))}
 
         {/* Marketplace app — /app and /app/templates/:id */}
         <Route

@@ -145,7 +145,7 @@ export default function useMarketplace() {
       const data = await apiFetch(`/api/templates/${id}/use/`, { method: 'POST' });
       setActiveTemplate(data);
       setCustomBlocks([]);
-      setPreviewMode(false);
+      setPreviewMode(true);
       setBuilderFeedback('');
       setTopbarStatusWithTimeout(`Opened: ${data.name}`);
     } catch (err) {

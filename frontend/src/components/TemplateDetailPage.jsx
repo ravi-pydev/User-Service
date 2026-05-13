@@ -99,7 +99,7 @@ export default function TemplateDetailPage({ user, onUse, onToggleFavorite, onOp
           ← Back to gallery
         </button>
         <div className="detail-page__locked-banner">
-          <span className="premium-badge">Premium</span>
+          <span className="detail-page__premium-badge">Premium</span>
           <h1>Premium Template</h1>
           <p>Upgrade to Premium to view the full details and use this template.</p>
           <button

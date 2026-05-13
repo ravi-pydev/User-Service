@@ -73,6 +73,12 @@ export default function BuilderWorkspace({
         .map((f) => ({ id: Number(f.name.replace('custom_block_', '')), type: f.type }))
     : customBlocks;
 
+  const handleReset = () => {
+    setLayoutOverride(null);
+    setFormTheme('light');
+    onResetBuilder?.();
+  };
+
   const toggleLayout = () => {
     setLayoutOverride((prev) => {
       const current = prev ?? templateLayout;
@@ -114,39 +120,6 @@ export default function BuilderWorkspace({
   return (
     <div className="builder-workspace">
 
-      {/* ── Template banner ─────────────────────────────────────────── */}
-      <div className="builder-banner">
-        <div className="builder-banner__left">
-          <span className="builder-banner__name">{activeTemplate.name}</span>
-          {isPremium && <span className="builder-banner__premium-tag">Premium</span>}
-        </div>
-        <button type="button" className="builder-banner__reset-btn" onClick={onResetBuilder}>
-          Reset
-        </button>
-      </div>
-
-      {/* ── Mode switcher — only for premium ────────────────────────── */}
-      {isPremium && (
-        <div className="builder-mode-switcher" role="group" aria-label="Builder mode">
-          <button
-            type="button"
-            className={`builder-mode-switcher__btn${!previewMode ? ' builder-mode-switcher__btn--active' : ''}`}
-            onClick={onEditMode}
-            aria-pressed={!previewMode}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className={`builder-mode-switcher__btn${previewMode ? ' builder-mode-switcher__btn--active' : ''}`}
-            onClick={onPreviewMode}
-            aria-pressed={previewMode}
-          >
-            Preview
-          </button>
-        </div>
-      )}
-
       {/* ── Edit mode panel — premium only ──────────────────────────── */}
       {isPremium && !previewMode && (
         <div className="builder-panel builder-panel--premium">
@@ -161,16 +134,45 @@ export default function BuilderWorkspace({
               <button type="button" onClick={() => onAddBlock?.('image')}>+ Image</button>
               <button type="button" onClick={() => onAddBlock?.('divider')}>+ Divider</button>
             </div>
-            {toolbarControls}
           </div>
 
           <DragDropFieldEditor fields={orderedFields} onChange={setOrderedFields} />
+
+          <div className="builder-panel__footer">
+            <button
+              type="button"
+              className="builder-mode-switcher__btn--inline"
+              onClick={onPreviewMode}
+            >
+              ← Preview
+            </button>
+          </div>
         </div>
       )}
 
-      {/* ── Preview toolbar (layout + theme) ────────────────────────── */}
+      {/* ── Preview toolbar (layout + theme + edit/reset actions) ───── */}
       {(isPremium ? previewMode : true) && (
         <div className="builder-preview-toolbar">
+          <div className="builder-preview-toolbar__left">
+            {isPremium && (
+              <>
+                <button
+                  type="button"
+                  className="builder-mode-switcher__btn--inline"
+                  onClick={onEditMode}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="builder-banner__reset-btn"
+                  onClick={handleReset}
+                >
+                  Reset
+                </button>
+              </>
+            )}
+          </div>
           {toolbarControls}
         </div>
       )}

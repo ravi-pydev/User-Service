@@ -125,7 +125,7 @@ function renderFieldInput(field, formData, setFormData) {
     case 'checkbox':
       return (
         <input type="checkbox" id={field.name} name={field.name}
-          checked={Boolean(formData[field.name])} onChange={handleChange} aria-label={field.label} />
+          checked={Boolean(formData[field.name])} onChange={handleChange} />
       );
     case 'image':
       return (
@@ -188,16 +188,37 @@ export default function FormPreview({
       noValidate
     >
       {fields.map((field) => (
-        <div key={field.name} className="form-field">
-          {field.type !== 'divider' && field.type !== 'image' && (
-            <label htmlFor={field.name}>
-              {field.label}
-              {field.required && (
-                <span className="required-marker" aria-hidden="true"> *</span>
-              )}
+        <div
+          key={field.name}
+          className={[
+            'form-field',
+            field.type === 'checkbox' ? 'form-field--checkbox' : '',
+            field.type === 'divider' || field.type === 'image' ? 'form-field--full-width' : '',
+          ].filter(Boolean).join(' ')}
+        >
+          {field.type === 'checkbox' ? (
+            <label htmlFor={field.name} className="form-field__checkbox-label">
+              {renderFieldInput(field, formData, setFormData)}
+              <span>
+                {field.label}
+                {field.required && (
+                  <span className="required-marker" aria-hidden="true"> *</span>
+                )}
+              </span>
             </label>
+          ) : (
+            <>
+              {field.type !== 'divider' && field.type !== 'image' && (
+                <label htmlFor={field.name}>
+                  {field.label}
+                  {field.required && (
+                    <span className="required-marker" aria-hidden="true"> *</span>
+                  )}
+                </label>
+              )}
+              {renderFieldInput(field, formData, setFormData)}
+            </>
           )}
-          {renderFieldInput(field, formData, setFormData)}
         </div>
       ))}
 
