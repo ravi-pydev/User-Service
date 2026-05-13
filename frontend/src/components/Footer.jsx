@@ -35,34 +35,34 @@ export default function Footer() {
             <ul className="site-footer__list">
               <li><button type="button" className="site-footer__link" onClick={() => navigate('/app')}>Templates</button></li>
               <li><button type="button" className="site-footer__link" onClick={() => navigate('/app?category=premium')}>Premium</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/')}>Features</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/features')}>Features</button></li>
             </ul>
           </div>
 
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Company</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link">About</button></li>
-              <li><button type="button" className="site-footer__link">Blog</button></li>
-              <li><button type="button" className="site-footer__link">Careers</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/about')}>About</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/blog')}>Blog</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/careers')}>Careers</button></li>
             </ul>
           </div>
 
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Support</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link">Documentation</button></li>
-              <li><button type="button" className="site-footer__link">Help Center</button></li>
-              <li><button type="button" className="site-footer__link">Contact</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/docs')}>Documentation</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/help')}>Help Center</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/contact')}>Contact</button></li>
             </ul>
           </div>
 
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Legal</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link">Privacy Policy</button></li>
-              <li><button type="button" className="site-footer__link">Terms of Service</button></li>
-              <li><button type="button" className="site-footer__link">Cookie Policy</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/privacy')}>Privacy Policy</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/terms')}>Terms of Service</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => navigate('/cookies')}>Cookie Policy</button></li>
             </ul>
           </div>
         </div>
