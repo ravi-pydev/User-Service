@@ -153,7 +153,7 @@ describe('AuthProvider — login()', () => {
 });
 
 describe('AuthProvider — logout()', () => {
-  it('clears localStorage and resets state', () => {
+  it('clears localStorage and resets state', async () => {
     const payload = {
       user_id: 4,
       username: 'dave',
@@ -163,12 +163,83 @@ describe('AuthProvider — logout()', () => {
     };
     localStorage.setItem('auth_token', buildFakeJwt(payload));
 
-    const getCtx = renderAuthProvider();
-
-    act(() => {
-      getCtx().logout();
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
     });
 
+    const getCtx = renderAuthProvider();
+
+    await act(async () => {
+      await getCtx().logout();
+    });
+
+    const ctx = getCtx();
+    expect(ctx.isAuthenticated).toBe(false);
+    expect(ctx.user).toBeNull();
+    expect(ctx.token).toBeNull();
+    expect(localStorage.getItem('auth_token')).toBeNull();
+  });
+
+  it('sends POST to /api/auth/logout/ with Authorization header before clearing state', async () => {
+    const fakeToken = buildFakeJwt({
+      user_id: 5,
+      username: 'eve',
+      email: 'eve@example.com',
+      is_premium: false,
+      iat: nowSec() - 10,
+      exp: nowSec() + 3600,
+    });
+    localStorage.setItem('auth_token', fakeToken);
+
+    const fetchMock = vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+    });
+
+    const getCtx = renderAuthProvider();
+
+    await act(async () => {
+      await getCtx().logout();
+    });
+
+    // fetch was called once with the correct URL and Authorization header
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, options] = fetchMock.mock.calls[0];
+    expect(url).toBe('/api/auth/logout/');
+    expect(options.method).toBe('POST');
+    expect(options.headers.Authorization).toBe(`Bearer ${fakeToken}`);
+
+    // local state is cleared after the request
+    const ctx = getCtx();
+    expect(ctx.isAuthenticated).toBe(false);
+    expect(ctx.user).toBeNull();
+    expect(ctx.token).toBeNull();
+    expect(localStorage.getItem('auth_token')).toBeNull();
+  });
+
+  it('clears localStorage and resets auth state even when the backend request fails', async () => {
+    const fakeToken = buildFakeJwt({
+      user_id: 6,
+      username: 'frank',
+      email: 'frank@example.com',
+      is_premium: true,
+      iat: nowSec() - 10,
+      exp: nowSec() + 3600,
+    });
+    localStorage.setItem('auth_token', fakeToken);
+
+    vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('Network error'));
+
+    const getCtx = renderAuthProvider();
+
+    await act(async () => {
+      await getCtx().logout();
+    });
+
+    // local state must be cleared despite the network error
     const ctx = getCtx();
     expect(ctx.isAuthenticated).toBe(false);
     expect(ctx.user).toBeNull();

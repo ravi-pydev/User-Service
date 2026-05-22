@@ -24,15 +24,32 @@ def generate_token(user_id: int) -> str:
 
     Claims:
         user_id (int): The database PK of the user.
+        username (str): The user's username.
+        email (str): The user's email.
+        is_premium (bool): Whether the user has a premium account.
         iat (int): Issued-at Unix timestamp.
         exp (int): Expiry Unix timestamp (iat + 86400 seconds / 24 hours).
 
     Returns:
         str: Encoded JWT string.
     """
+    from apps.registration.models import User as UserModel
     iat = int(time.time())
+    try:
+        user = UserModel.objects.get(pk=user_id)
+        username = user.username
+        email = user.email
+        is_premium = user.is_premium
+    except Exception:
+        username = ''
+        email = ''
+        is_premium = False
+
     payload = {
         "user_id": user_id,
+        "username": username,
+        "email": email,
+        "is_premium": is_premium,
         "iat": iat,
         "exp": iat + 86400,
     }

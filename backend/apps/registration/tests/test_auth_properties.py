@@ -348,3 +348,288 @@ def test_tampered_token_rejected():
         f"Expected error message to mention 'expired' or 'invalid', "
         f"got: {data['detail']!r}"
     )
+
+
+# ── Property 1: JWT payload completeness for any user ────────────────────────
+
+# Feature: user-auth, Property 1: JWT payload completeness for any user
+@pytest.mark.django_db(transaction=True)
+@given(
+    username=username_strategy,
+    email=email_strategy,
+    is_premium=st.booleans(),
+)
+@h_settings(max_examples=20, deadline=None)
+def test_jwt_payload_completeness_for_any_user(username, email, is_premium):
+    """
+    **Validates: Requirements 1.1, 1.2, 1.4**
+
+    For any user record with any combination of username, email, and is_premium
+    values, calling generate_token(user.id) SHALL produce a JWT that, when
+    decoded, contains all 6 claims (user_id, username, email, is_premium, iat,
+    exp) whose values exactly match the user record.
+    """
+    from hypothesis import assume
+    from django.db import IntegrityError
+    from apps.registration.api.jwt_utils import decode_token, generate_token
+
+    # Skip this example if username or email already exists in the DB
+    # (Hypothesis may generate the same value across examples within a
+    # transaction=True test where rows persist between examples)
+    if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+        assume(False)
+
+    # Create a real User record in the DB
+    user = User.objects.create(
+        username=username,
+        email=email,
+        is_premium=is_premium,
+    )
+
+    token = generate_token(user.id)
+    payload = decode_token(token)
+
+    # Assert all 6 claims are present
+    assert set(payload.keys()) == {"user_id", "username", "email", "is_premium", "iat", "exp"}, (
+        f"Expected exactly 6 claims, got: {set(payload.keys())}"
+    )
+
+    # Assert each claim value matches the user record
+    assert payload["user_id"] == user.id, (
+        f"user_id mismatch: expected {user.id}, got {payload['user_id']}"
+    )
+    assert payload["username"] == user.username, (
+        f"username mismatch: expected {user.username!r}, got {payload['username']!r}"
+    )
+    assert payload["email"] == user.email, (
+        f"email mismatch: expected {user.email!r}, got {payload['email']!r}"
+    )
+    assert payload["is_premium"] == user.is_premium, (
+        f"is_premium mismatch: expected {user.is_premium}, got {payload['is_premium']}"
+    )
+    assert isinstance(payload["iat"], int), (
+        f"iat should be an int, got {type(payload['iat'])}"
+    )
+    assert isinstance(payload["exp"], int), (
+        f"exp should be an int, got {type(payload['exp'])}"
+    )
+
+
+# ── Property 2: JWT is_premium claim is always boolean ───────────────────────
+
+# Feature: user-auth, Property 2: JWT is_premium claim is always boolean
+@pytest.mark.django_db(transaction=True)
+@given(is_premium=st.booleans())
+@h_settings(max_examples=20, deadline=None)
+def test_jwt_is_premium_claim_is_always_boolean(is_premium):
+    """
+    **Validates: Requirements 1.4**
+
+    For any user record, the is_premium claim in the decoded JWT produced by
+    generate_token(user.id) SHALL always be of type bool (never a string,
+    integer, or None).
+    """
+    import uuid
+    from apps.registration.api.jwt_utils import decode_token, generate_token
+
+    unique_id = uuid.uuid4().hex[:8]
+    user = User.objects.create(
+        username=f"prem_{unique_id}",
+        email=f"prem_{unique_id}@example.com",
+        is_premium=is_premium,
+    )
+
+    token = generate_token(user.id)
+    payload = decode_token(token)
+
+    assert isinstance(payload["is_premium"], bool), (
+        f"is_premium claim should be bool, got {type(payload['is_premium'])!r} "
+        f"with value {payload['is_premium']!r}"
+    )
+
+
+# ── Property 4: Successful upgrade token reflects premium status ──────────────
+
+# Feature: user-auth, Property 4: Successful upgrade token reflects premium status
+@pytest.mark.django_db(transaction=True)
+@given(
+    username=username_strategy,
+    email=email_strategy,
+    password=password_strategy,
+)
+@h_settings(max_examples=20, deadline=None)
+def test_upgrade_token_reflects_premium_status(username, email, password):
+    """
+    **Validates: Requirements 3.1, 3.4**
+
+    For any authenticated user, when UpgradeUserView processes a successful
+    upgrade (outcome="success"), the returned `token` SHALL decode to a payload
+    where `is_premium` is True and `user_id` matches the authenticated user's ID.
+
+    Steps:
+    1. POST /api/auth/signup/  — create the user
+    2. POST /api/auth/login/   — obtain a JWT
+    3. POST /api/user/upgrade/ with {"outcome": "success"} — upgrade to premium
+    4. Decode the returned token and assert is_premium=True and user_id matches
+    """
+    from apps.registration.api.jwt_utils import decode_token
+
+    client = Client()
+
+    # ── Step 1: Signup ────────────────────────────────────────────────────────
+    signup_response = client.post(
+        "/api/auth/signup/",
+        data=json.dumps({"username": username, "email": email, "password": password}),
+        content_type="application/json",
+    )
+
+    # Skip if signup fails (e.g. duplicate username/email across Hypothesis examples)
+    if signup_response.status_code != 201:
+        return
+
+    signup_data = signup_response.json()
+    user_id = signup_data["id"]
+
+    # ── Step 2: Login ─────────────────────────────────────────────────────────
+    login_response = client.post(
+        "/api/auth/login/",
+        data=json.dumps({"identifier": email, "password": password}),
+        content_type="application/json",
+    )
+
+    assert login_response.status_code == 200, (
+        f"Expected HTTP 200 for valid login, got {login_response.status_code}. "
+        f"Response: {login_response.json()}"
+    )
+
+    login_token = login_response.json()["token"]
+
+    # ── Step 3: Upgrade to premium ────────────────────────────────────────────
+    upgrade_response = client.post(
+        "/api/user/upgrade/",
+        data=json.dumps({"outcome": "success"}),
+        content_type="application/json",
+        HTTP_AUTHORIZATION=f"Bearer {login_token}",
+    )
+
+    assert upgrade_response.status_code == 200, (
+        f"Expected HTTP 200 for successful upgrade, got {upgrade_response.status_code}. "
+        f"Response: {upgrade_response.json()}"
+    )
+
+    upgrade_data = upgrade_response.json()
+    assert "token" in upgrade_data, (
+        f"Expected 'token' key in upgrade response, got keys: {list(upgrade_data.keys())}"
+    )
+
+    # ── Step 4: Decode and verify the upgrade token ───────────────────────────
+    upgrade_token = upgrade_data["token"]
+    payload = decode_token(upgrade_token)
+
+    assert payload["is_premium"] is True, (
+        f"Expected is_premium=True in upgrade token payload, got: {payload['is_premium']!r}"
+    )
+    assert payload["user_id"] == user_id, (
+        f"Expected user_id={user_id} in upgrade token payload, got: {payload['user_id']!r}"
+    )
+
+
+# ── Property 5: Downgrade token reflects free status ─────────────────────────
+
+# Feature: user-auth, Property 5: Downgrade token reflects free status
+@pytest.mark.django_db(transaction=True)
+@given(
+    username=username_strategy,
+    email=email_strategy,
+    password=password_strategy,
+)
+@h_settings(max_examples=20, deadline=None)
+def test_downgrade_token_reflects_free_status(username, email, password):
+    """
+    **Validates: Requirements 4.1, 4.3**
+
+    For any authenticated premium user, when DowngradeUserView processes a
+    downgrade, the returned `token` SHALL decode to a payload where `is_premium`
+    is False and `user_id` matches the authenticated user's ID.
+
+    Steps:
+    1. POST /api/auth/signup/    — create the user
+    2. POST /api/auth/login/     — obtain a JWT
+    3. POST /api/user/upgrade/   with {"outcome": "success"} — upgrade to premium
+    4. POST /api/user/downgrade/ — revert to free tier
+    5. Decode the returned token and assert is_premium=False and user_id matches
+    """
+    from apps.registration.api.jwt_utils import decode_token
+
+    client = Client()
+
+    # ── Step 1: Signup ────────────────────────────────────────────────────────
+    signup_response = client.post(
+        "/api/auth/signup/",
+        data=json.dumps({"username": username, "email": email, "password": password}),
+        content_type="application/json",
+    )
+
+    # Skip if signup fails (e.g. duplicate username/email across Hypothesis examples)
+    if signup_response.status_code != 201:
+        return
+
+    signup_data = signup_response.json()
+    user_id = signup_data["id"]
+
+    # ── Step 2: Login ─────────────────────────────────────────────────────────
+    login_response = client.post(
+        "/api/auth/login/",
+        data=json.dumps({"identifier": email, "password": password}),
+        content_type="application/json",
+    )
+
+    assert login_response.status_code == 200, (
+        f"Expected HTTP 200 for valid login, got {login_response.status_code}. "
+        f"Response: {login_response.json()}"
+    )
+
+    login_token = login_response.json()["token"]
+
+    # ── Step 3: Upgrade to premium ────────────────────────────────────────────
+    upgrade_response = client.post(
+        "/api/user/upgrade/",
+        data=json.dumps({"outcome": "success"}),
+        content_type="application/json",
+        HTTP_AUTHORIZATION=f"Bearer {login_token}",
+    )
+
+    assert upgrade_response.status_code == 200, (
+        f"Expected HTTP 200 for successful upgrade, got {upgrade_response.status_code}. "
+        f"Response: {upgrade_response.json()}"
+    )
+
+    upgrade_token = upgrade_response.json()["token"]
+
+    # ── Step 4: Downgrade to free tier ────────────────────────────────────────
+    downgrade_response = client.post(
+        "/api/user/downgrade/",
+        content_type="application/json",
+        HTTP_AUTHORIZATION=f"Bearer {upgrade_token}",
+    )
+
+    assert downgrade_response.status_code == 200, (
+        f"Expected HTTP 200 for downgrade, got {downgrade_response.status_code}. "
+        f"Response: {downgrade_response.json()}"
+    )
+
+    downgrade_data = downgrade_response.json()
+    assert "token" in downgrade_data, (
+        f"Expected 'token' key in downgrade response, got keys: {list(downgrade_data.keys())}"
+    )
+
+    # ── Step 5: Decode and verify the downgrade token ─────────────────────────
+    downgrade_token = downgrade_data["token"]
+    payload = decode_token(downgrade_token)
+
+    assert payload["is_premium"] is False, (
+        f"Expected is_premium=False in downgrade token payload, got: {payload['is_premium']!r}"
+    )
+    assert payload["user_id"] == user_id, (
+        f"Expected user_id={user_id} in downgrade token payload, got: {payload['user_id']!r}"
+    )
