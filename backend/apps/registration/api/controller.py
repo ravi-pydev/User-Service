@@ -66,6 +66,18 @@ class MarketplaceHome(APIView):
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
+class LogoutView(APIView):
+    """POST /api/auth/logout/ — invalidate session (client-side token drop).
+    JWTs are stateless; this endpoint exists for future token blacklisting
+    and to give clients a clean logout API to call.
+    """
+
+    def post(self, request):
+        # Optionally validate the token so only authenticated users can call this
+        get_authenticated_user(request)
+        return Response({"message": "Logged out successfully."}, status=status.HTTP_200_OK)
+
+
 class SignupView(APIView):
     """POST /api/auth/signup/ — create a new user account."""
 
@@ -113,6 +125,7 @@ class LoginView(APIView):
                     "id": user.id,
                     "username": user.username,
                     "email": user.email,
+                    "is_premium": user.is_premium,
                 },
             },
             status=status.HTTP_200_OK,
@@ -153,10 +166,12 @@ class UpgradeUserView(APIView):
         if outcome == "success":
             user.is_premium = True
             user.save(update_fields=["is_premium"])
+            new_token = jwt_utils.generate_token(user.id)
             return Response(
                 {
                     "message": "Premium unlocked successfully",
                     "payment_status": "success",
+                    "token": new_token,
                     "user": UserSerializer(user).data,
                 }
             )
@@ -179,9 +194,11 @@ class DowngradeUserView(APIView):
         user = get_authenticated_user(request)
         user.is_premium = False
         user.save(update_fields=["is_premium"])
+        new_token = jwt_utils.generate_token(user.id)
         return Response(
             {
                 "message": "Reverted to free tier.",
+                "token": new_token,
                 "user": UserSerializer(user).data,
             }
         )

@@ -7,6 +7,12 @@ export default function Footer() {
   const navigate = useNavigate();
   const year = new Date().getFullYear();
 
+  /** Navigate to a path and scroll back to the top of the page. */
+  const go = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="site-footer" role="contentinfo">
       <div className="site-footer__inner">
@@ -16,7 +22,7 @@ export default function Footer() {
           <button
             type="button"
             className="site-footer__brand"
-            onClick={() => navigate('/')}
+            onClick={() => go('/')}
             aria-label="FormForge — go to home"
           >
             <span className="site-footer__brand-icon">⬡</span>
@@ -33,36 +39,36 @@ export default function Footer() {
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Product</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/app')}>Templates</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/app?category=premium')}>Premium</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/features')}>Features</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/app')}>Templates</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/app?category=premium')}>Premium</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/features')}>Features</button></li>
             </ul>
           </div>
 
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Company</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/about')}>About</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/blog')}>Blog</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/careers')}>Careers</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/about')}>About</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/blog')}>Blog</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/careers')}>Careers</button></li>
             </ul>
           </div>
 
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Support</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/docs')}>Documentation</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/help')}>Help Center</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/contact')}>Contact</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/docs')}>Documentation</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/help')}>Help Center</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/contact')}>Contact</button></li>
             </ul>
           </div>
 
           <div className="site-footer__col">
             <h3 className="site-footer__col-heading">Legal</h3>
             <ul className="site-footer__list">
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/privacy')}>Privacy Policy</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/terms')}>Terms of Service</button></li>
-              <li><button type="button" className="site-footer__link" onClick={() => navigate('/cookies')}>Cookie Policy</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/privacy')}>Privacy Policy</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/terms')}>Terms of Service</button></li>
+              <li><button type="button" className="site-footer__link" onClick={() => go('/cookies')}>Cookie Policy</button></li>
             </ul>
           </div>
         </div>

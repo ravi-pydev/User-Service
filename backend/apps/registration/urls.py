@@ -9,6 +9,7 @@ api_urlpatterns = [
     # ── Auth ──────────────────────────────────────────────────────────────
     path('api/auth/signup/', controller.SignupView.as_view(), name='auth-signup'),
     path('api/auth/login/', controller.LoginView.as_view(), name='auth-login'),
+    path('api/auth/logout/', controller.LogoutView.as_view(), name='auth-logout'),
 
     # ── User ──────────────────────────────────────────────────────────────
     path('api/user/', controller.CurrentUserView.as_view(), name='current-user'),

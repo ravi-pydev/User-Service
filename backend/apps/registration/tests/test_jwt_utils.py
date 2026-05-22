@@ -68,11 +68,11 @@ class TestGenerateToken:
         token_b = generate_token(user_id=2)
         assert token_a != token_b
 
-    def test_claims_structure_has_exactly_three_keys(self):
-        """JWT payload should contain exactly user_id, iat, and exp."""
+    def test_claims_structure_has_six_keys(self):
+        """JWT payload should contain exactly user_id, username, email, is_premium, iat, and exp."""
         token = generate_token(user_id=7)
         payload = decode_token(token)
-        assert set(payload.keys()) == {"user_id", "iat", "exp"}
+        assert set(payload.keys()) == {"user_id", "username", "email", "is_premium", "iat", "exp"}
 
 
 @pytest.mark.django_db

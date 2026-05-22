@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api/client.js';
+import useAuth from './useAuth.js';
 
 /**
  * useMarketplace — central state and async logic for the template marketplace.
@@ -10,6 +11,8 @@ import { apiFetch } from '../api/client.js';
  * @returns {object} All state values and action functions.
  */
 export default function useMarketplace() {
+  const { login } = useAuth();
+
   // ── User ──────────────────────────────────────────────────────────────────
   const [user, setUser] = useState(null);
 
@@ -188,6 +191,7 @@ export default function useMarketplace() {
       });
 
       if (data.payment_status === 'success') {
+        login(data.token, data.user);
         setUser(data.user);
         setModalFeedback('Premium unlocked! Opening your template…');
 
@@ -207,7 +211,7 @@ export default function useMarketplace() {
       setModalFeedback('An error occurred. Please try again.');
       console.error('runMockUpgrade error', err);
     }
-  }, [pendingPremiumTemplateId, useTemplate]);
+  }, [login, pendingPremiumTemplateId, useTemplate]);
 
   /**
    * Add a custom block to the builder.

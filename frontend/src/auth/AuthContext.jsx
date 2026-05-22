@@ -66,10 +66,32 @@ export function AuthProvider({ children }) {
   const login = useCallback((newToken, newUser) => {
     localStorage.setItem('auth_token', newToken);
     setToken(newToken);
-    setUser(newUser);
+    // Merge is_premium from JWT payload if not present in newUser
+    const payload = decodeJwtPayload(newToken);
+    const enrichedUser = {
+      ...newUser,
+      is_premium: newUser.is_premium ?? payload?.is_premium ?? false,
+    };
+    setUser(enrichedUser);
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    // Best-effort call to backend logout endpoint
+    const storedToken = localStorage.getItem('auth_token');
+    if (storedToken) {
+      try {
+        await fetch('/api/auth/logout/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${storedToken}`,
+          },
+          credentials: 'include',
+        });
+      } catch {
+        // Ignore network errors — always clear local state
+      }
+    }
     localStorage.removeItem('auth_token');
     setToken(null);
     setUser(null);
