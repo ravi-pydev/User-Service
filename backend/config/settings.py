@@ -58,17 +58,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+## production
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('DB_NAME'),
+#         'USER': config('DB_USER'),
+#         'PASSWORD': config('DB_PASSWORD'),
+#         'HOST': config('DB_HOST'),
+#         'PORT': config('DB_PORT'),
+#     	}
+#     }
 
+
+##local
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
-    	}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -95,5 +104,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
 CORS_ALLOW_CREDENTIALS = True
