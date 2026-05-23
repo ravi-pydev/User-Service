@@ -8,22 +8,22 @@ export default function ContactPage() {
           <div className="static-page__card">
             <span className="static-page__feature-icon">💬</span>
             <h3>General Enquiries</h3>
-            <p>hello@formforge.io</p>
+            <p><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></p>
           </div>
           <div className="static-page__card">
             <span className="static-page__feature-icon">🛠️</span>
             <h3>Technical Support</h3>
-            <p>support@formforge.io</p>
+            <p><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></p>
           </div>
           <div className="static-page__card">
             <span className="static-page__feature-icon">💼</span>
             <h3>Sales & Partnerships</h3>
-            <p>sales@formforge.io</p>
+            <p><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></p>
           </div>
           <div className="static-page__card">
             <span className="static-page__feature-icon">📰</span>
             <h3>Press</h3>
-            <p>press@formforge.io</p>
+            <p><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></p>
           </div>
         </div>
       </div>

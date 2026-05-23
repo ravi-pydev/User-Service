@@ -22,7 +22,7 @@ export default function HelpCenterPage() {
         </div>
         <section className="static-page__section">
           <h2>Still need help?</h2>
-          <p>Email us at <strong>support@formforge.io</strong> and we'll get back to you within one business day.</p>
+          <p>Email us at <strong><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></strong> and we'll get back to you within one business day.</p>
         </section>
       </div>
     </div>
