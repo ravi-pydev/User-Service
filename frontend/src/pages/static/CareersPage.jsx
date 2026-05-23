@@ -25,7 +25,10 @@ export default function CareersPage() {
         </section>
         <section className="static-page__section">
           <h2>Don't see your role?</h2>
-          <p>We're always looking for talented people. Send your CV to <strong>jobs@formforge.io</strong>.</p>
+          <p>
+            We're always looking for talented people. Send your CV to 
+            <strong><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></strong>.
+          </p>
         </section>
       </div>
     </div>
