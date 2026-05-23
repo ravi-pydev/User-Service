@@ -23,6 +23,13 @@ export default function AboutPage() {
             of teams across 40+ countries.
           </p>
         </section>
+        <section className="static-page__section">
+          <h2>Get in Touch</h2>
+          <p>
+            Have a question or want to work with us? Reach out at{' '}
+            <strong><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></strong>.
+          </p>
+        </section>
       </div>
     </div>
   );
