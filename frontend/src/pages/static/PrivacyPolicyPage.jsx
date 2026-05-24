@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
         </section>
         <section className="static-page__section">
           <h2>3. Data Retention</h2>
-          <p>We retain your data for as long as your account is active or as needed to provide services. You may request deletion at any time by contacting privacy@formforge.io.</p>
+          <p>We retain your data for as long as your account is active or as needed to provide services. You may request deletion at any time by contacting ravidarshan@formforge.in.</p>
         </section>
         <section className="static-page__section">
           <h2>4. Cookies</h2>
@@ -22,7 +22,10 @@ export default function PrivacyPolicyPage() {
         </section>
         <section className="static-page__section">
           <h2>5. Contact</h2>
-          <p>For privacy-related questions, contact us at <strong>privacy@formforge.io</strong>.</p>
+          <p>
+            For privacy-related questions, contact us at 
+            <strong><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></strong>.
+            </p>
         </section>
       </div>
     </div>

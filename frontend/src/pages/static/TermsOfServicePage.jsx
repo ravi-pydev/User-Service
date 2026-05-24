@@ -26,7 +26,10 @@ export default function TermsOfServicePage() {
         </section>
         <section className="static-page__section">
           <h2>6. Contact</h2>
-          <p>Questions about these Terms? Email <strong>legal@formforge.io</strong>.</p>
+          <p>
+            Questions about these Terms? Email 
+            <strong><a href="mailto:ravidarshan@formforge.in">ravidarshan@formforge.in</a></strong>.
+            </p>
         </section>
       </div>
     </div>
